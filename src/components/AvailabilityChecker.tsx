@@ -5,12 +5,14 @@ import Image from 'next/image'
 import { formatIDR, laptopImage, type Laptop } from '@/lib/laptops'
 import { BUSINESS_WA } from '@/lib/whatsapp'
 import { AvailabilityCalendar, formatDatesSummary } from './AvailabilityCalendar'
+import { LocationPicker, mapsLinkFor } from './LocationPicker'
 import { WhatsAppButton } from './WhatsAppButton'
 
 export function AvailabilityChecker({ laptops }: { laptops: Laptop[] }) {
   const list = laptops ?? []
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [selectedDates, setSelectedDates] = useState<string[]>([])
+  const [location, setLocation] = useState('')
 
   const selectedLaptop = list.find((l) => l.id === selectedId) ?? null
 
@@ -33,13 +35,13 @@ export function AvailabilityChecker({ laptops }: { laptops: Laptop[] }) {
                     active ? 'border-accent bg-accent/10 shadow-card' : 'border-border bg-paper hover:border-accent/60 hover:shadow-card'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-md">
+                  <div className="flex items-center gap-4">
+                    <div className="relative h-24 w-36 shrink-0 overflow-hidden rounded-lg">
                       <Image
                         src={laptopImage(laptop.slug)}
                         alt={laptop.name}
                         fill
-                        sizes="80px"
+                        sizes="144px"
                         className="object-cover"
                       />
                     </div>
@@ -48,7 +50,7 @@ export function AvailabilityChecker({ laptops }: { laptops: Laptop[] }) {
                         <span className="font-display text-base text-ink truncate">{laptop.name}</span>
                         <span className="font-body text-xs text-ink-muted shrink-0">{laptop.category}</span>
                       </div>
-                      <div className="mt-0.5 font-body text-sm text-ink-muted">
+                      <div className="mt-1 font-body text-sm text-ink-muted">
                         {formatIDR(laptop.dailyRate)}/hari
                       </div>
                     </div>
@@ -74,11 +76,18 @@ export function AvailabilityChecker({ laptops }: { laptops: Laptop[] }) {
               onSelectDates={setSelectedDates}
             />
             <div className="mt-6 border-t border-border pt-5">
+              <div className="mb-5">
+                <LocationPicker value={location} onChange={setLocation} />
+              </div>
               <WhatsAppButton
                 phone={BUSINESS_WA}
                 message={
                   selectedDates.length > 0
-                    ? `Halo, saya cek ketersediaan ${selectedLaptop.name} untuk ${formatDatesSummary(selectedDates)} (${selectedDates.length} hari). Apakah unit tersedia?`
+                    ? `Halo, saya cek ketersediaan ${selectedLaptop.name} untuk ${formatDatesSummary(selectedDates)} (${selectedDates.length} hari).${
+                        location.trim()
+                          ? ` Lokasi pengantaran: ${location.trim()} (maps: ${mapsLinkFor(location)})`
+                          : ''
+                      } Apakah unit tersedia?`
                     : `Halo, saya tertarik dengan ${selectedLaptop.name}. Boleh cek ketersediaan unit?`
                 }
                 className="inline-flex items-center justify-center rounded-md bg-accent px-5 py-3 font-display text-accent-fg hover:bg-accent/90"

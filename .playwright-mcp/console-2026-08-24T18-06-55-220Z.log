@@ -1,0 +1,5 @@
+[     704ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://api.whatsapp.com/data/manifest.json:0
+[     706ms] [ERROR] Manifest fetch from https://api.whatsapp.com/data/manifest.json failed, code 404 @ https://api.whatsapp.com/send/?phone=6288292123852&text=Halo%2C+saya+tertarik+sewa+laptop&type=phone_number&app_absent=0:26
+[    1169ms] [ERROR] Failed to launch 'whatsapp://send/?phone=6288292123852&text=Halo%2C%20saya%20tertarik%20sewa%20laptop&type=phone_number&app_absent=0' because the scheme does not have a registered handler. @ https://api.whatsapp.com/send/?phone=6288292123852&text=Halo%2C+saya+tertarik+sewa+laptop&type=phone_number&app_absent=0:0
+[    1350ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://api.whatsapp.com/data/manifest.json:0
+[    1419ms] [ERROR] Manifest fetch from https://api.whatsapp.com/data/manifest.json failed, code 404 @ https://api.whatsapp.com/send/?phone=6288292123852&text=Halo%2C+saya+tertarik+sewa+laptop&type=phone_number&app_absent=0:0

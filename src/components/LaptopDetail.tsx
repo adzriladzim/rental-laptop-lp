@@ -3,12 +3,14 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { AvailabilityCalendar, formatDatesSummary } from '@/components/AvailabilityCalendar'
+import { LocationPicker, mapsLinkFor } from '@/components/LocationPicker'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { BUSINESS_WA } from '@/lib/whatsapp'
 import { formatIDR, laptopImage, type Laptop } from '@/lib/laptops'
 
 export function LaptopDetail({ laptop }: { laptop: Laptop }) {
   const [selectedDates, setSelectedDates] = useState<string[]>([])
+  const [location, setLocation] = useState('')
 
   const specsRows: [string, string | undefined][] = [
     ['Processor', laptop.specs.processor],
@@ -22,7 +24,11 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
 
   const message = `Halo, saya tertarik sewa ${laptop.name} (${laptop.category})${
     selectedDates.length > 0 ? ` untuk ${formatDatesSummary(selectedDates)} (${selectedDates.length} hari)` : ''
-  }. Boleh info ketersediaan & harga?`
+  }.${
+    location.trim()
+      ? ` Lokasi pengantaran: ${location.trim()} (maps: ${mapsLinkFor(location)})`
+      : ''
+  } Boleh info ketersediaan & harga?`
 
   return (
     <div className="grid gap-10 lg:grid-cols-12">
@@ -74,22 +80,26 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
           <div className="space-y-3">
             {(
               [
-                ['Harian', laptop.dailyRate],
-                ['Mingguan', laptop.weeklyRate],
-                ['Bulanan', laptop.monthlyRate],
-              ] as [string, number][]
-            ).map(([label, price]) => (
+                ['Harian · 1–2 hari', laptop.dailyRate, '/hari'],
+                ['3 Hari+ · 3–6 hari', 160000, '/hari'],
+                ['Mingguan · 7–29 hari', laptop.weeklyRate, ''],
+                ['Bulanan · 30+ hari', laptop.monthlyRate, ''],
+              ] as [string, number, string][]
+            ).map(([label, price, suffix]) => (
               <div
                 key={label}
                 className={`flex items-center justify-between rounded-lg px-4 py-3 ${
-                  label === 'Bulanan' ? 'bg-accent/10 ring-1 ring-accent/40' : 'bg-paper'
+                  label.startsWith('Bulanan') ? 'bg-accent/10 ring-1 ring-accent/40' : 'bg-paper'
                 }`}
               >
                 <span className="font-body text-sm text-ink">
                   {label}
-                  {label === 'Bulanan' ? ' · paling hemat' : ''}
+                  {label.startsWith('Bulanan') ? ' · paling hemat' : ''}
                 </span>
-                <span className="font-display text-lg text-ink">{formatIDR(price)}</span>
+                <span className="font-display text-lg text-ink">
+                  {formatIDR(price)}
+                  {suffix && <span className="font-body text-xs text-ink-muted">{suffix}</span>}
+                </span>
               </div>
             ))}
           </div>
@@ -104,6 +114,10 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
             live
             onSelectDates={setSelectedDates}
           />
+        </div>
+
+        <div className="rounded-2xl border border-border bg-paper p-6">
+          <LocationPicker value={location} onChange={setLocation} />
         </div>
 
         <WhatsAppButton
