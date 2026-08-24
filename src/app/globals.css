@@ -11,6 +11,24 @@
   --color-accent: #d97706;
   --color-accent-fg: #ffffff;
   --color-border: #e5e5e5;
+
+  --color-wa: #25d366;
+
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.08);
+  --shadow-lift: 0 12px 24px -8px rgb(26 26 26 / 0.16);
+
+  --animate-fade-up: fade-up 0.6s ease-out both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 body {

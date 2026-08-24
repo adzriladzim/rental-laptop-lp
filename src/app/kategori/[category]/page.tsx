@@ -1,9 +1,19 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { LAPTOPS, LAPTOP_CATEGORIES, formatIDR, type LaptopCategory } from '@/lib/laptops'
+import {
+  LAPTOP_CATEGORIES,
+  formatIDR,
+  laptopImage,
+  type LaptopCategory,
+} from '@/lib/laptops'
+import { getLaptops } from '@/lib/api'
+import { FALLBACK_LAPTOPS } from '@/lib/laptops'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
+import { Button } from '@/components/ui/Button'
 
+export const revalidate = 300
 export const dynamicParams = false
 
 const CATEGORY_INFO: Record<LaptopCategory, { slug: string; description: string }> = {
@@ -60,7 +70,13 @@ export default async function CategoryPage({
   const cat = SLUG_TO_CATEGORY[category]
   if (!cat) notFound()
 
-  const laptops = LAPTOPS.filter((l) => l.category === cat)
+  let laptops
+  try {
+    laptops = await getLaptops()
+  } catch {
+    laptops = FALLBACK_LAPTOPS
+  }
+  const catLaptops = laptops.filter((l) => l.category === cat)
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-12 sm:py-16">
@@ -77,59 +93,66 @@ export default async function CategoryPage({
         </div>
         <div className="md:col-span-5 md:flex md:items-end md:justify-end">
           <p className="font-body text-base text-ink-muted">
-            {laptops.length > 0
-              ? `${laptops.length} unit tersedia`
+            {catLaptops.length > 0
+              ? `${catLaptops.length} unit tersedia`
               : 'Unit segera hadir — hubungi kami untuk request.'}
           </p>
         </div>
       </header>
 
       {/* Filtered laptop cards */}
-      {laptops.length > 0 ? (
+      {catLaptops.length > 0 ? (
         <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {laptops.map((laptop, i) => (
-            <article
+          {catLaptops.map((laptop) => (
+            <Link
               key={laptop.id}
-              className={`rounded-2xl border border-border bg-paper p-6 transition-colors hover:border-accent/60 ${
-                i % 3 === 0 ? 'lg:border-l-4 lg:border-l-accent' : ''
-              }`}
+              href={`/laptop/${laptop.slug}`}
+              className="group block overflow-hidden rounded-2xl border border-border bg-paper shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-lift"
             >
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <span className="font-body text-xs uppercase tracking-wider text-accent">
-                  {laptop.brand}
-                </span>
-                <span className="font-body text-xs text-ink-muted">{laptop.category}</span>
+              <div className="relative aspect-[4/3] w-full">
+                <Image
+                  src={laptopImage(laptop.slug)}
+                  alt={laptop.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover"
+                />
               </div>
-              <h2 className="mb-1 font-display text-xl text-ink">{laptop.name}</h2>
-              <p className="mb-4 line-clamp-2 font-body text-sm text-ink-muted">
-                {laptop.description}
-              </p>
-              <dl className="mb-5 space-y-1 font-body text-sm text-ink-muted">
-                <div className="flex justify-between gap-2">
-                  <dt>Prosesor</dt>
-                  <dd className="text-right text-ink">{laptop.specs.processor}</dd>
+              <div className="p-6">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <span className="font-body text-xs uppercase tracking-wider text-accent">
+                    {laptop.brand}
+                  </span>
+                  <span className="font-body text-xs text-ink-muted">{laptop.category}</span>
                 </div>
-                <div className="flex justify-between gap-2">
-                  <dt>RAM</dt>
-                  <dd className="text-right text-ink">{laptop.specs.ram}</dd>
+                <h2 className="mb-1 font-display text-xl text-ink">{laptop.name}</h2>
+                <p className="mb-4 line-clamp-2 font-body text-sm text-ink-muted">
+                  {laptop.description}
+                </p>
+                <dl className="mb-5 space-y-1 font-body text-sm text-ink-muted">
+                  <div className="flex justify-between gap-2">
+                    <dt>Prosesor</dt>
+                    <dd className="text-right text-ink">{laptop.specs.processor}</dd>
+                  </div>
+                  <div className="flex justify-between gap-2">
+                    <dt>RAM</dt>
+                    <dd className="text-right text-ink">{laptop.specs.ram}</dd>
+                  </div>
+                </dl>
+                <div className="flex items-end justify-between gap-3 border-t border-border pt-4">
+                  <div>
+                    <p className="font-body text-xs text-ink-muted">Mulai dari</p>
+                    <p className="font-display text-lg text-accent">
+                      {formatIDR(laptop.dailyRate)}
+                      <span className="text-sm text-ink-muted">/hari</span>
+                    </p>
+                  </div>
+                  <span className="inline-flex items-center gap-1 font-display text-sm font-semibold text-ink transition-colors group-hover:text-accent">
+                    Lihat Detail <span aria-hidden>→</span>
+                  </span>
                 </div>
-              </dl>
-              <div className="flex items-end justify-between gap-3 border-t border-border pt-4">
-                <div>
-                  <p className="font-body text-xs text-ink-muted">Mulai dari</p>
-                  <p className="font-display text-lg text-accent">
-                    {formatIDR(laptop.dailyRateIdr)}
-                    <span className="text-sm text-ink-muted">/hari</span>
-                  </p>
-                </div>
-                <Link
-                  href={`/laptop/${laptop.slug}`}
-                  className="inline-flex items-center gap-1 font-display text-sm font-semibold text-ink transition-colors hover:text-accent"
-                >
-                  Lihat Detail <span aria-hidden>→</span>
-                </Link>
               </div>
-            </article>
+            </Link>
           ))}
         </section>
       ) : (
@@ -139,7 +162,7 @@ export default async function CategoryPage({
             Hubungi kami untuk request laptop gaming atau kategori lain sesuai kebutuhan.
           </p>
           <WhatsAppButton
-            phone="6288292123852"
+            phone="6281296352115"
             message="Halo! Saya butuh laptop gaming untuk sewa. Apakah tersedia?"
             className="mt-5 inline-flex items-center text-green-600 hover:text-green-700 font-medium"
           >
@@ -151,12 +174,7 @@ export default async function CategoryPage({
       {/* CTA */}
       <section className="mt-16 flex flex-col items-start justify-between gap-4 rounded-2xl bg-paper-subtle p-8 sm:p-12 sm:flex-row sm:items-center">
         <h2 className="font-display text-2xl sm:text-3xl text-ink">Lihat semua laptop kami</h2>
-        <Link
-          href="/laptop"
-          className="inline-flex items-center justify-center px-8 py-4 bg-accent text-accent-fg font-semibold rounded-lg hover:bg-accent/90 transition-colors"
-        >
-          Lihat Semua Laptop
-        </Link>
+        <Button href="/laptop">Lihat Semua Laptop</Button>
       </section>
     </main>
   )

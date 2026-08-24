@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react'
 import { buildWaLink, BUSINESS_WA } from '@/lib/whatsapp'
+import { submitLead } from '@/lib/api'
 
 interface ContactFormProps {
   laptops: { id: string; name: string }[]
@@ -10,12 +11,16 @@ interface ContactFormProps {
 const inputClass =
   'w-full rounded-lg border border-border bg-paper px-4 py-3 text-ink placeholder:text-ink-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent'
 
+type Status = 'idle' | 'success' | 'error'
+
 export function ContactForm({ laptops }: ContactFormProps) {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [interest, setInterest] = useState('')
+  const [status, setStatus] = useState<Status>('idle')
+  const [submitting, setSubmitting] = useState(false)
 
   const valid =
     name.trim() !== '' &&
@@ -23,9 +28,7 @@ export function ContactForm({ laptops }: ContactFormProps) {
     /^\S+@\S+\.\S+$/.test(email) &&
     interest !== ''
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    if (!valid) return
+  const openWhatsApp = () => {
     const text =
       `Halo, saya tertarik sewa laptop.\n` +
       `Nama: ${name}\n` +
@@ -34,6 +37,48 @@ export function ContactForm({ laptops }: ContactFormProps) {
       `Laptop minat: ${interest}\n` +
       `Pesan: ${message || '-'}`
     window.open(buildWaLink(BUSINESS_WA, text), '_blank', 'noopener,noreferrer')
+  }
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!valid) return
+    setSubmitting(true)
+    openWhatsApp()
+    try {
+      await submitLead({
+        name,
+        phone,
+        email,
+        message,
+        source: 'website',
+        laptopInterest: interest || undefined,
+      })
+      setStatus('success')
+    } catch {
+      // WhatsApp already opened — lead capture failed, surface retry.
+      setStatus('error')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleRetry = async () => {
+    setSubmitting(true)
+    try {
+      await submitLead({
+        name,
+        phone,
+        email,
+        message,
+        source: 'website',
+        laptopInterest: interest || undefined,
+      })
+      setStatus('success')
+    } catch {
+      setStatus('error')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -98,13 +143,31 @@ export function ContactForm({ laptops }: ContactFormProps) {
       </label>
       <button
         type="submit"
-        disabled={!valid}
+        disabled={!valid || submitting}
         className="inline-flex w-full items-center justify-center rounded-lg bg-accent px-6 py-4 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-40"
       >
-        Kirim via WhatsApp
+        {submitting ? 'Mengirim…' : 'Kirim via WhatsApp'}
       </button>
-      {!valid && (
+      {!valid && status === 'idle' && (
         <p className="text-xs text-ink-muted">Nama, WhatsApp, email, dan laptop wajib diisi.</p>
+      )}
+      {status === 'success' && (
+        <p className="rounded-lg bg-green-100 px-4 py-3 text-sm font-medium text-green-700" role="status">
+          Inquiry terkirim! Lanjut ke WhatsApp…
+        </p>
+      )}
+      {status === 'error' && (
+        <div className="rounded-lg bg-amber-100 px-4 py-3 text-sm text-amber-800" role="alert">
+          <p>WhatsApp terbuka, tapi penyimpanan inquiry gagal.</p>
+          <button
+            type="button"
+            onClick={handleRetry}
+            disabled={submitting}
+            className="mt-2 inline-flex items-center font-display font-semibold text-amber-900 underline disabled:opacity-40"
+          >
+            Coba lagi
+          </button>
+        </div>
       )}
     </form>
   )

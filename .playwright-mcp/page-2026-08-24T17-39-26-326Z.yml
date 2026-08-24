@@ -1,0 +1,122 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - heading "LaptopRental." [level=1] [ref=e7]
+        - navigation [ref=e8]:
+          - link "Katalog" [ref=e9] [cursor=pointer]:
+            - /url: /laptop
+          - link "Harga" [ref=e10] [cursor=pointer]:
+            - /url: /harga
+          - link "Rekomendasi" [ref=e11] [cursor=pointer]:
+            - /url: /rekomendasi
+          - link "Testimoni" [ref=e12] [cursor=pointer]:
+            - /url: /testimoni
+          - link "FAQ" [ref=e13] [cursor=pointer]:
+            - /url: /faq
+          - link "Panduan" [ref=e14] [cursor=pointer]:
+            - /url: /panduan
+          - link "Kontak" [ref=e15] [cursor=pointer]:
+            - /url: /kontak
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - heading [level=1] [ref=e20]:
+          - text: Laptop
+          - emphasis [ref=e21]: Tepat
+          - text: untuk Setiap Proyek
+        - paragraph [ref=e22]: Sistem rekomendasi cerdas membantu Anda menemukan laptop yang sesuai kebutuhan. Cek ketersediaan real-time, booking langsung via WhatsApp.
+        - generic [ref=e23]:
+          - link "Mulai Rekomendasi" [ref=e24] [cursor=pointer]:
+            - /url: "#rekomendasi"
+          - link "Lihat Unit Tersedia" [ref=e25] [cursor=pointer]:
+            - /url: "#ketersediaan"
+      - paragraph [ref=e34]: MacBook Pro, Dell XPS, ThinkPad
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - heading "Rekomendasi Cerdas" [level=3] [ref=e42]
+        - paragraph [ref=e43]: Quiz 5 pertanyaan untuk menentukan laptop yang tepat sesuai pekerjaan dan budget Anda.
+      - generic [ref=e44]:
+        - heading "Ketersediaan Real-time" [level=3] [ref=e48]
+        - paragraph [ref=e49]: Cek unit yang tersedia per tanggal. Tidak perlu tanya-tanya lagi, langsung tahu mana yang bisa disewa.
+      - generic [ref=e50]:
+        - heading "Booking via WhatsApp" [level=3] [ref=e54]
+        - paragraph [ref=e55]: Sistem generate pesan terstruktur dengan detail lengkap. Tinggal klik, langsung chat WhatsApp.
+    - generic [ref=e57]:
+      - heading "Mulai dengan Rekomendasi Laptop" [level=2] [ref=e58]
+      - paragraph [ref=e59]: Jawab 5 pertanyaan singkat, dapatkan rekomendasi laptop yang sesuai kebutuhan kerja Anda.
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - generic [ref=e64]: "1"
+              - generic [ref=e65]: Jenis pekerjaan utama
+            - generic [ref=e66]:
+              - generic [ref=e67]: "2"
+              - generic [ref=e68]: Software yang sering digunakan
+            - generic [ref=e69]:
+              - generic [ref=e70]: "3"
+              - generic [ref=e71]: Budget maksimal per bulan
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - generic [ref=e74]: "4"
+              - generic [ref=e75]: Durasi rental yang diinginkan
+            - generic [ref=e76]:
+              - generic [ref=e77]: "5"
+              - generic [ref=e78]: Lokasi pengiriman
+        - link "Mulai Quiz Rekomendasi" [ref=e79] [cursor=pointer]:
+          - /url: /rekomendasi
+    - contentinfo [ref=e80]:
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - heading "LaptopRental." [level=3] [ref=e84]
+            - paragraph [ref=e85]: Platform rental laptop terpercaya dengan sistem rekomendasi cerdas.
+            - button "WhatsApp Kami" [ref=e86]
+          - generic [ref=e89]:
+            - heading "Layanan" [level=4] [ref=e90]
+            - list [ref=e91]:
+              - listitem [ref=e92]:
+                - link "Katalog Laptop" [ref=e93] [cursor=pointer]:
+                  - /url: /laptop
+              - listitem [ref=e94]:
+                - link "Harga & Paket" [ref=e95] [cursor=pointer]:
+                  - /url: /harga
+              - listitem [ref=e96]:
+                - link "Rekomendasi" [ref=e97] [cursor=pointer]:
+                  - /url: /rekomendasi
+              - listitem [ref=e98]:
+                - link "Testimoni" [ref=e99] [cursor=pointer]:
+                  - /url: /testimoni
+              - listitem [ref=e100]:
+                - link "FAQ" [ref=e101] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e102]:
+                - link "Panduan" [ref=e103] [cursor=pointer]:
+                  - /url: /panduan
+              - listitem [ref=e104]:
+                - link "Cek Ketersediaan" [ref=e105] [cursor=pointer]:
+                  - /url: /ketersediaan
+              - listitem [ref=e106]:
+                - link "Cek Status Booking" [ref=e107] [cursor=pointer]:
+                  - /url: /status
+              - listitem [ref=e108]:
+                - link "Corporate & Bulk" [ref=e109] [cursor=pointer]:
+                  - /url: /korporat
+              - listitem [ref=e110]:
+                - link "Tentang Kami" [ref=e111] [cursor=pointer]:
+                  - /url: /tentang
+              - listitem [ref=e112]:
+                - link "Kontak" [ref=e113] [cursor=pointer]:
+                  - /url: /kontak
+              - listitem [ref=e114]:
+                - link "Syarat & Ketentuan" [ref=e115] [cursor=pointer]:
+                  - /url: /legal/syarat-ketentuan
+          - generic [ref=e116]:
+            - heading "Kontak" [level=4] [ref=e117]
+            - generic [ref=e118]:
+              - paragraph [ref=e119]: 📱 0882 9212 3852
+              - paragraph [ref=e120]: 📍 Jakarta · Depok · Tangerang · Bekasi
+              - paragraph [ref=e121]: 🕒 Senin–Sabtu, 08:00–20:00
+        - paragraph [ref=e123]: © 2026 LaptopRental. Platform rental laptop profesional.
+  - button "Open Next.js Dev Tools" [ref=e129] [cursor=pointer]
+  - alert [ref=e133]

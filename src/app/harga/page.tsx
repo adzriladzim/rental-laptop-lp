@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { LAPTOPS, formatIDR, type Laptop } from '@/lib/laptops'
+import { Button } from '@/components/ui/Button'
+import { getLaptops } from '@/lib/api'
+import { FALLBACK_LAPTOPS, formatIDR, type Laptop } from '@/lib/laptops'
+import { buildWaLink, BUSINESS_WA } from '@/lib/whatsapp'
+
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Harga & Paket — Sewa Laptop Jakarta',
@@ -9,30 +13,40 @@ export const metadata: Metadata = {
 }
 
 function monthlySavings(l: Laptop): number {
-  const daily30 = l.dailyRateIdr * 30
+  const daily30 = l.dailyRate * 30
   if (daily30 <= 0) return 0
-  return Math.round(((daily30 - l.monthlyRateIdr) / daily30) * 100)
+  return Math.round(((daily30 - l.monthlyRate) / daily30) * 100)
 }
 
-export default function HargaPage() {
-  const best = LAPTOPS.reduce((a, b) => (monthlySavings(b) > monthlySavings(a) ? b : a))
+export default async function HargaPage() {
+  let laptops: Laptop[]
+  try {
+    laptops = await getLaptops()
+  } catch {
+    laptops = FALLBACK_LAPTOPS
+  }
+
+  const bySlug = (slug: string) =>
+    laptops.find((l) => l.slug === slug) ?? FALLBACK_LAPTOPS.find((l) => l.slug === slug)
+
+  const best = laptops.reduce((a, b) => (monthlySavings(b) > monthlySavings(a) ? b : a))
 
   const bundles = [
     {
       name: 'Student Starter',
-      laptop: LAPTOPS.find((l) => l.slug === 'dell-vostro-3400')!,
+      laptop: bySlug('dell-vostro-3400')!,
       items: ['Mouse wireless', 'Tas laptop', 'Charger ekstra', 'Garansi selama sewa'],
       blurb: 'Untuk tugas kuliah & belajar harian.',
     },
     {
       name: 'Developer Pro',
-      laptop: LAPTOPS.find((l) => l.slug === 'lenovo-thinkpad-t480')!,
+      laptop: bySlug('lenovo-thinkpad-t480')!,
       items: ['Mouse ergonomik', 'Hub USB-C', 'Tas anti-shock', 'Setup dev environment'],
       blurb: 'Performa untuk coding & multitasking berat.',
     },
     {
       name: 'Business Premium',
-      laptop: LAPTOPS.find((l) => l.slug === 'dell-latitude-7400')!,
+      laptop: bySlug('dell-latitude-7400')!,
       items: ['Mouse premium', 'Tas eksekutif', 'Docking station', 'Prioritas support'],
       blurb: 'Profesional & elegan untuk meeting & presentasi.',
     },
@@ -40,10 +54,10 @@ export default function HargaPage() {
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-12 sm:py-16">
-      <header className="mb-10 grid gap-4 md:grid-cols-12">
+      <header className="mb-10 grid animate-fade-up gap-4 md:grid-cols-12">
         <div className="md:col-span-7">
           <p className="font-body text-sm uppercase tracking-widest text-accent">Harga</p>
-          <h1 className="mt-2 font-display text-4xl leading-tight text-ink sm:text-5xl">
+          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
             Harga Transparan, <em className="text-accent italic">Tanpa</em> Biaya Tersembunyi
           </h1>
         </div>
@@ -53,23 +67,33 @@ export default function HargaPage() {
       </header>
 
       <section className="mb-16">
-        <div className="overflow-x-auto rounded-2xl border border-border">
+        <div className="overflow-x-auto rounded-2xl shadow-card">
           <table className="w-full border-collapse text-left">
             <thead>
-              <tr className="font-display text-sm text-ink">
+              <tr className="bg-ink text-paper font-display text-sm">
                 <th className="px-5 py-4">Laptop</th>
                 <th className="px-5 py-4 text-right">Harian</th>
                 <th className="px-5 py-4 text-right">Mingguan</th>
                 <th className="px-5 py-4 text-right">Bulanan</th>
                 <th className="px-5 py-4 text-right">Hemat</th>
+                <th className="px-5 py-4 text-right">Pesan</th>
               </tr>
             </thead>
             <tbody>
-              {LAPTOPS.map((l) => {
+              {laptops.map((l) => {
                 const saving = monthlySavings(l)
                 const isBest = l.id === best.id
+                const waHref = buildWaLink(
+                  BUSINESS_WA,
+                  `Halo! Saya mau pesan ${l.name} (${formatIDR(l.monthlyRate)}/bln). Bisa info ketersediaan?`,
+                )
                 return (
-                  <tr key={l.id} className="border-t border-border font-body text-sm">
+                  <tr
+                    key={l.id}
+                    className={`border-t border-border font-body text-sm ${
+                      isBest ? 'border-l-4 border-l-accent bg-accent/5' : ''
+                    }`}
+                  >
                     <td className="px-5 py-4">
                       <span className="font-medium text-ink">{l.name}</span>
                       {isBest && (
@@ -78,14 +102,19 @@ export default function HargaPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-5 py-4 text-right text-ink-muted">{formatIDR(l.dailyRateIdr)}</td>
-                    <td className="px-5 py-4 text-right text-ink-muted">
-                      {formatIDR(l.weeklyRateIdr)}
+                    <td className="px-5 py-4 text-right font-display text-base font-semibold text-ink">
+                      {formatIDR(l.dailyRate)}
                     </td>
-                    <td className="px-5 py-4 text-right font-medium text-ink">
-                      {formatIDR(l.monthlyRateIdr)}
+                    <td className="px-5 py-4 text-right font-display text-base font-semibold text-ink">
+                      {formatIDR(l.weeklyRate)}
+                    </td>
+                    <td className="px-5 py-4 text-right font-display text-base font-bold text-ink">
+                      {formatIDR(l.monthlyRate)}
                     </td>
                     <td className="px-5 py-4 text-right font-semibold text-accent">{saving}%</td>
+                    <td className="px-5 py-4 text-right">
+                      <Button href={waHref} variant="wa" size="sm">Pesan</Button>
+                    </td>
                   </tr>
                 )
               })}
@@ -122,14 +151,9 @@ export default function HargaPage() {
                 ))}
               </ul>
               <p className="mb-4 font-display text-lg text-ink">
-                Mulai {formatIDR(b.laptop.monthlyRateIdr)}/bln
+                Mulai {formatIDR(b.laptop.monthlyRate)}/bln
               </p>
-              <Link
-                href="/laptop"
-                className="inline-flex w-full items-center justify-center rounded-lg bg-accent px-5 py-3 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90"
-              >
-                Pilih laptop
-              </Link>
+              <Button href="/laptop" size="sm" className="w-full">Pilih laptop</Button>
             </div>
           ))}
         </div>

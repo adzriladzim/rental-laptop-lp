@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { LaptopCatalog } from '@/components/LaptopCatalog'
-import { LAPTOPS } from '@/lib/laptops'
+import { getLaptops } from '@/lib/api'
+import { FALLBACK_LAPTOPS } from '@/lib/laptops'
+
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Katalog Laptop — Sewa Jakarta',
@@ -8,7 +11,14 @@ export const metadata: Metadata = {
     'Katalog laptop sewa harian, mingguan, dan bulanan. Pilih dari kategori Developer, Designer, Student, dan Business.',
 }
 
-export default function LaptopCatalogPage() {
+export default async function LaptopCatalogPage() {
+  let laptops
+  try {
+    laptops = await getLaptops()
+  } catch {
+    laptops = FALLBACK_LAPTOPS
+  }
+
   return (
     <main className="mx-auto max-w-7xl px-5 py-12 sm:py-16">
       <header className="mb-10 grid gap-4 md:grid-cols-12">
@@ -19,11 +29,11 @@ export default function LaptopCatalogPage() {
           </h1>
         </div>
         <p className="font-body text-base text-ink-muted self-end md:col-span-5">
-          {LAPTOPS.length} unit tersedia. Filter berdasarkan kategori, lalu cek detail & ketersediaan
+          {laptops.length} unit tersedia. Filter berdasarkan kategori, lalu cek detail & ketersediaan
           tiap unit.
         </p>
       </header>
-      <LaptopCatalog laptops={LAPTOPS} />
+      <LaptopCatalog laptops={laptops} />
     </main>
   )
 }

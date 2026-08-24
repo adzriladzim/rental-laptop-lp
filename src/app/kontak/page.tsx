@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { ContactForm } from '@/components/ContactForm'
-import { LAPTOPS } from '@/lib/laptops'
+import { getLaptops } from '@/lib/api'
+import { FALLBACK_LAPTOPS } from '@/lib/laptops'
 import { BUSINESS_WA } from '@/lib/whatsapp'
 
 export const metadata: Metadata = {
@@ -10,7 +11,14 @@ export const metadata: Metadata = {
     'Hubungi tim sewa laptop Jakarta via WhatsApp, telepon, atau form. Area Jakarta, Depok, Tangerang, Bekasi.',
 }
 
-export default function KontakPage() {
+export default async function KontakPage() {
+  let laptops
+  try {
+    laptops = await getLaptops()
+  } catch {
+    laptops = FALLBACK_LAPTOPS
+  }
+
   return (
     <main className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
       <header className="mb-10 grid gap-4 md:grid-cols-12">
@@ -43,10 +51,10 @@ export default function KontakPage() {
             <div>
               <p className="text-xs uppercase tracking-wider text-ink-muted">Telepon</p>
               <a
-                href="tel:088292123852"
+                href="tel:081296352115"
                 className="font-medium text-ink transition-colors hover:text-accent"
               >
-                0882 9212 3852
+                0812 9635 2115
               </a>
             </div>
             <div>
@@ -61,7 +69,7 @@ export default function KontakPage() {
         </div>
 
         <div className="lg:col-span-7">
-          <ContactForm laptops={LAPTOPS.map((l) => ({ id: l.id, name: l.name }))} />
+          <ContactForm laptops={laptops.map((l) => ({ id: l.id, name: l.name }))} />
         </div>
       </div>
     </main>

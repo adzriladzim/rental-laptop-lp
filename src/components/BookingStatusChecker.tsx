@@ -2,21 +2,34 @@
 
 import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
+import { getBookingStatus, ApiError } from '@/lib/api'
+import { formatIDR } from '@/lib/laptops'
+
+const MONTHS = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+  'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
+]
+
+function fmtDate(iso: string): string {
+  const [y, m, d] = iso.split('-').map(Number)
+  if (!y || !m || !d) return iso
+  return `${d} ${MONTHS[m - 1]} ${y}`
+}
 
 type BookingResult = {
   bookingNumber: string
   status: string
-  laptop: string
   dates: string
-  pickup: string
+  total: string | null
 }
 
 export function BookingStatusChecker() {
   const [input, setInput] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<BookingResult | null>(null)
+  const [loading, setLoading] = useState(false)
 
-  function handleCheck(e: FormEvent) {
+  async function handleCheck(e: FormEvent) {
     e.preventDefault()
     const value = input.trim()
 
@@ -31,16 +44,30 @@ export function BookingStatusChecker() {
       return
     }
 
-    // TODO: replace mock lookup with real booking API
+    setLoading(true)
     setError(null)
-    setResult({
-      bookingNumber: value.toUpperCase(),
-      status: 'Confirmed',
-      laptop: 'ThinkPad X280',
-      dates: '1–7 Sep 2026',
-      pickup: 'Jakarta Selatan',
-    })
+    setResult(null)
+
+    try {
+      const data = await getBookingStatus(value)
+      setResult({
+        bookingNumber: data.bookingNumber,
+        status: data.status,
+        dates: `${fmtDate(data.startDate)} – ${fmtDate(data.endDate)}`,
+        total: data.totalAmount != null ? formatIDR(data.totalAmount) : null,
+      })
+    } catch (err) {
+      if (err instanceof ApiError && (err.status === 404 || err.status === 400)) {
+        setError('Booking tidak ditemukan')
+      } else {
+        setError('Gagal mengecek status. Coba lagi nanti.')
+      }
+    } finally {
+      setLoading(false)
+    }
   }
+
+  const isConfirmed = result?.status?.toLowerCase() === 'confirmed'
 
   return (
     <div className="rounded-2xl border border-border bg-paper p-6 sm:p-8">
@@ -63,14 +90,15 @@ export function BookingStatusChecker() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="LPR-2026-0012"
             autoComplete="off"
-            className="w-full rounded-lg border border-border bg-paper-subtle px-4 py-3 font-body text-ink outline-none transition-colors focus:border-accent"
+            className="w-full rounded-lg border border-border bg-paper-subtle px-4 py-3 font-body text-ink outline-none transition-colors focus:border-accent focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           />
         </div>
         <button
           type="submit"
-          className="inline-flex items-center justify-center rounded-lg bg-accent px-6 py-3 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90"
+          disabled={loading}
+          className="inline-flex items-center justify-center rounded-lg bg-accent px-6 py-3 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90 disabled:opacity-50"
         >
-          Cek Status
+          {loading ? 'Mengecek…' : 'Cek Status'}
         </button>
       </form>
 
@@ -95,15 +123,11 @@ export function BookingStatusChecker() {
               <p className="text-xs uppercase tracking-wider text-ink-muted">
                 Status
               </p>
-              <span className="mt-1 inline-flex items-center rounded-full bg-green-100 px-3 py-1 font-body text-sm font-medium text-green-700">
+              <span className={`mt-1 inline-flex items-center rounded-full px-3 py-1 font-body text-sm font-medium ${
+                isConfirmed ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+              }`}>
                 {result.status}
               </span>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wider text-ink-muted">
-                Unit
-              </p>
-              <p className="font-display text-lg text-ink">{result.laptop}</p>
             </div>
             <div>
               <p className="text-xs uppercase tracking-wider text-ink-muted">
@@ -111,12 +135,14 @@ export function BookingStatusChecker() {
               </p>
               <p className="font-display text-lg text-ink">{result.dates}</p>
             </div>
-            <div className="sm:col-span-2">
-              <p className="text-xs uppercase tracking-wider text-ink-muted">
-                Titik Ambil
-              </p>
-              <p className="font-display text-lg text-ink">{result.pickup}</p>
-            </div>
+            {result.total && (
+              <div>
+                <p className="text-xs uppercase tracking-wider text-ink-muted">
+                  Total
+                </p>
+                <p className="font-display text-lg text-ink">{result.total}</p>
+              </div>
+            )}
           </div>
 
           <div className="mt-6 flex items-center gap-2 border-t border-border pt-6">

@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { AvailabilityCalendar } from '@/components/AvailabilityCalendar'
+import Image from 'next/image'
+import { AvailabilityCalendar, formatDatesSummary } from '@/components/AvailabilityCalendar'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { BUSINESS_WA } from '@/lib/whatsapp'
-import { formatIDR, type Laptop } from '@/lib/laptops'
+import { formatIDR, laptopImage, type Laptop } from '@/lib/laptops'
 
 export function LaptopDetail({ laptop }: { laptop: Laptop }) {
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [selectedDates, setSelectedDates] = useState<string[]>([])
 
   const specsRows: [string, string | undefined][] = [
     ['Processor', laptop.specs.processor],
@@ -20,12 +21,22 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
   ]
 
   const message = `Halo, saya tertarik sewa ${laptop.name} (${laptop.category})${
-    selectedDate ? ` untuk tanggal ${selectedDate}` : ''
+    selectedDates.length > 0 ? ` untuk ${formatDatesSummary(selectedDates)} (${selectedDates.length} hari)` : ''
   }. Boleh info ketersediaan & harga?`
 
   return (
     <div className="grid gap-10 lg:grid-cols-12">
       <div className="lg:col-span-7">
+        <div className="relative mb-6 aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-card">
+          <Image
+            src={laptopImage(laptop.slug)}
+            alt={laptop.name}
+            fill
+            priority
+            sizes="(max-width: 1024px) 100vw, 58vw"
+            className="object-cover"
+          />
+        </div>
         <div className="mb-3 flex items-center gap-3">
           <span className="font-body text-xs uppercase tracking-wider text-accent">
             {laptop.category}
@@ -63,9 +74,9 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
           <div className="space-y-3">
             {(
               [
-                ['Harian', laptop.dailyRateIdr],
-                ['Mingguan', laptop.weeklyRateIdr],
-                ['Bulanan', laptop.monthlyRateIdr],
+                ['Harian', laptop.dailyRate],
+                ['Mingguan', laptop.weeklyRate],
+                ['Bulanan', laptop.monthlyRate],
               ] as [string, number][]
             ).map(([label, price]) => (
               <div
@@ -86,7 +97,13 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
 
         <div className="rounded-2xl border border-border bg-paper p-6">
           <h2 className="mb-4 font-display text-xl text-ink">Cek Ketersediaan</h2>
-          <AvailabilityCalendar laptopId={laptop.id} onSelectDate={setSelectedDate} />
+          <AvailabilityCalendar
+            laptopId={laptop.id}
+            laptopSlug={laptop.slug}
+            laptopCategory={laptop.category}
+            live
+            onSelectDates={setSelectedDates}
+          />
         </div>
 
         <WhatsAppButton
@@ -94,7 +111,9 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
           message={message}
           className="block w-full rounded-lg bg-accent px-6 py-4 text-center font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90"
         >
-          {selectedDate ? `Sewa via WhatsApp — ${selectedDate}` : 'Sewa via WhatsApp'}
+          {selectedDates.length > 0
+            ? `Sewa via WhatsApp — ${formatDatesSummary(selectedDates)}`
+            : 'Sewa via WhatsApp'}
         </WhatsAppButton>
       </aside>
     </div>

@@ -1,11 +1,19 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { LAPTOPS, getLaptopBySlug } from '@/lib/laptops'
+import { getLaptops, getLaptopBySlug } from '@/lib/api'
+import { FALLBACK_LAPTOPS } from '@/lib/laptops'
 import { LaptopDetail } from '@/components/LaptopDetail'
 
-export function generateStaticParams() {
-  return LAPTOPS.map((l) => ({ slug: l.slug }))
+export const revalidate = 300
+
+export async function generateStaticParams() {
+  try {
+    const list = await getLaptops()
+    return list.map((l) => ({ slug: l.slug }))
+  } catch {
+    return FALLBACK_LAPTOPS.map((l) => ({ slug: l.slug }))
+  }
 }
 
 export async function generateMetadata({
@@ -14,7 +22,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const laptop = getLaptopBySlug(slug)
+  let laptop
+  try {
+    laptop = await getLaptopBySlug(slug)
+  } catch {
+    laptop = FALLBACK_LAPTOPS.find((l) => l.slug === slug)
+  }
   if (!laptop) return { title: 'Laptop tidak ditemukan' }
   return {
     title: `${laptop.name} — Sewa Jakarta`,
@@ -28,7 +41,12 @@ export default async function LaptopDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const laptop = getLaptopBySlug(slug)
+  let laptop
+  try {
+    laptop = await getLaptopBySlug(slug)
+  } catch {
+    laptop = FALLBACK_LAPTOPS.find((l) => l.slug === slug)
+  }
   if (!laptop) notFound()
 
   return (

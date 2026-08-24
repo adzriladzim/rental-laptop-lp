@@ -1,157 +1,11 @@
-export type LaptopCategory = 'Developer' | 'Designer' | 'Student' | 'Business' | 'Gaming'
-export type LaptopSpecs = {
-  processor: string
-  ram: string
-  storage: string
-  screen?: string
-  battery?: string
-  gpu?: string
-  weight?: string
-}
+// Laptop data layer.
+// Live data now comes from the backend via @/lib/api. This module keeps:
+//  - the shared types (re-exported from @/lib/api)
+//  - FALLBACK_LAPTOPS: used ONLY when the API is unreachable (build/resilience)
+//  - pure helpers: formatIDR, laptopImage, recommendLaptop
 
-export type Laptop = {
-  id: string
-  name: string
-  brand: string
-  model: string
-  category: LaptopCategory
-  specs: LaptopSpecs
-  dailyRateIdr: number
-  weeklyRateIdr: number
-  monthlyRateIdr: number
-  partner: string | null // null = own, string = partner name
-  description: string
-  slug: string
-}
-
-export const LAPTOPS: Laptop[] = [
-  {
-    id: '1',
-    name: 'Lenovo ThinkPad X280',
-    brand: 'Lenovo',
-    model: 'ThinkPad X280',
-    category: 'Business',
-    specs: { processor: 'Intel Core i5-8250U', ram: '8GB', storage: '256GB SSD', screen: '12.5" Full HD', battery: 'Tahan lama' },
-    dailyRateIdr: 75000,
-    weeklyRateIdr: 450000,
-    monthlyRateIdr: 1500000,
-    partner: null,
-    description: 'Ringkas, cepat, dan siap kerja. Cocok untuk Office, kuliah, Zoom, browsing.',
-    slug: 'lenovo-thinkpad-x280',
-  },
-  {
-    id: '2',
-    name: 'Dell Vostro 5370',
-    brand: 'Dell',
-    model: 'Vostro 5370',
-    category: 'Business',
-    specs: { processor: 'Intel Core i5-8250U', ram: '8GB', storage: '256GB SSD' },
-    dailyRateIdr: 70000,
-    weeklyRateIdr: 420000,
-    monthlyRateIdr: 1400000,
-    partner: null,
-    description: 'Ringan, cepat, siap kerja. Cocok untuk Office, Zoom, browsing, coding ringan.',
-    slug: 'dell-vostro-5370',
-  },
-  {
-    id: '3',
-    name: 'MacBook Pro 2017',
-    brand: 'Apple',
-    model: 'MacBook Pro 2017',
-    category: 'Designer',
-    specs: { processor: 'Intel Core i5/i7 (2017)', ram: '8GB', storage: '256GB SSD', screen: 'Retina', battery: 'Awet', weight: 'Ringan' },
-    dailyRateIdr: 150000,
-    weeklyRateIdr: 900000,
-    monthlyRateIdr: 3000000,
-    partner: null,
-    description: 'Premium, performa ngebut. Cocok untuk editing video/foto, desain, coding.',
-    slug: 'macbook-pro-2017',
-  },
-  {
-    id: '4',
-    name: 'Lenovo ThinkPad X13',
-    brand: 'Lenovo',
-    model: 'ThinkPad X13',
-    category: 'Developer',
-    specs: { processor: 'Intel Core i7 Gen 10', ram: '8GB', storage: '512GB SSD', battery: 'Awet' },
-    dailyRateIdr: 100000,
-    weeklyRateIdr: 600000,
-    monthlyRateIdr: 2000000,
-    partner: null,
-    description: 'Ringan, cepat, baterai awet. Cocok untuk produktivitas harian, coding, desain.',
-    slug: 'lenovo-thinkpad-x13',
-  },
-  {
-    id: '5',
-    name: 'Dell Latitude 7310',
-    brand: 'Dell',
-    model: 'Latitude 7310',
-    category: 'Business',
-    specs: { processor: 'Intel Core i5-10310U', ram: '16GB', storage: '256GB SSD' },
-    dailyRateIdr: 95000,
-    weeklyRateIdr: 570000,
-    monthlyRateIdr: 1900000,
-    partner: null,
-    description: 'Kuliah, kerja kantoran, editing ringan, meeting. Desain slim & elegan.',
-    slug: 'dell-latitude-7310',
-  },
-  {
-    id: '6',
-    name: 'Dell Latitude 5400',
-    brand: 'Dell',
-    model: 'Latitude 5400',
-    category: 'Business',
-    specs: { processor: 'Intel Core i5-8365U', ram: '16GB', storage: '256GB SSD', battery: '2-3 jam' },
-    dailyRateIdr: 85000,
-    weeklyRateIdr: 510000,
-    monthlyRateIdr: 1700000,
-    partner: null,
-    description: 'Cepat & responsif. Cocok untuk kerja kantoran, tugas kuliah, editing ringan, meeting.',
-    slug: 'dell-latitude-5400',
-  },
-  {
-    id: '7',
-    name: 'Lenovo ThinkPad T480',
-    brand: 'Lenovo',
-    model: 'ThinkPad T480',
-    category: 'Developer',
-    specs: { processor: 'Intel Core i7-8550U', ram: '16GB', storage: '1TB SSD', battery: 'Berjam-jam' },
-    dailyRateIdr: 120000,
-    weeklyRateIdr: 720000,
-    monthlyRateIdr: 2400000,
-    partner: null,
-    description: 'Kencang, stabil, nyaman. Cocok untuk kerja, editing, kuliah, multitasking berat.',
-    slug: 'lenovo-thinkpad-t480',
-  },
-  {
-    id: '8',
-    name: 'Dell Vostro 3400',
-    brand: 'Dell',
-    model: 'Vostro 3400',
-    category: 'Student',
-    specs: { processor: 'Intel Core i5-1135G7', ram: '8GB', storage: '256GB SSD' },
-    dailyRateIdr: 65000,
-    weeklyRateIdr: 390000,
-    monthlyRateIdr: 1300000,
-    partner: null,
-    description: 'Performa cepat, desain elegan. Cocok untuk kerja, desain ringan, meeting.',
-    slug: 'dell-vostro-3400',
-  },
-  {
-    id: '9',
-    name: 'Dell Latitude 7400',
-    brand: 'Dell',
-    model: 'Latitude 7400',
-    category: 'Business',
-    specs: { processor: 'Intel Core i5 Gen 8', ram: '16GB', storage: '512GB SSD' },
-    dailyRateIdr: 110000,
-    weeklyRateIdr: 660000,
-    monthlyRateIdr: 2200000,
-    partner: null,
-    description: 'Laptop kelas bisnis, performa tinggi. Cocok untuk profesional.',
-    slug: 'dell-latitude-7400',
-  },
-]
+import type { Laptop, LaptopCategory } from '@/lib/api'
+export type { Laptop, LaptopCategory, LaptopSpecs } from '@/lib/api'
 
 export const LAPTOP_CATEGORIES: LaptopCategory[] = [
   'Developer',
@@ -161,8 +15,163 @@ export const LAPTOP_CATEGORIES: LaptopCategory[] = [
   'Gaming',
 ]
 
-export function getLaptopBySlug(slug: string): Laptop | undefined {
-  return LAPTOPS.find((l) => l.slug === slug)
+// 9 hardcoded laptops in the live API shape (camelCase). Used as a resilience
+// fallback when the backend is down at build/runtime.
+export const FALLBACK_LAPTOPS: Laptop[] = [
+  {
+    id: '1',
+    name: 'Lenovo ThinkPad X280',
+    brand: 'Lenovo',
+    model: 'ThinkPad X280',
+    category: 'Business',
+    specs: { processor: 'Intel Core i5-8250U', ram: '8GB', storage: '256GB SSD', screen: '12.5" Full HD', battery: 'Tahan lama' },
+    dailyRate: 75000,
+    weeklyRate: 450000,
+    monthlyRate: 1500000,
+    status: 'Available',
+    slug: 'lenovo-thinkpad-x280',
+    description: 'Ringkas, cepat, dan siap kerja. Cocok untuk Office, kuliah, Zoom, browsing.',
+    partnerId: null,
+    photoUrl: null,
+  },
+  {
+    id: '2',
+    name: 'Dell Vostro 5370',
+    brand: 'Dell',
+    model: 'Vostro 5370',
+    category: 'Business',
+    specs: { processor: 'Intel Core i5-8250U', ram: '8GB', storage: '256GB SSD' },
+    dailyRate: 70000,
+    weeklyRate: 420000,
+    monthlyRate: 1400000,
+    status: 'Available',
+    slug: 'dell-vostro-5370',
+    description: 'Ringan, cepat, siap kerja. Cocok untuk Office, Zoom, browsing, coding ringan.',
+    partnerId: null,
+    photoUrl: null,
+  },
+  {
+    id: '3',
+    name: 'MacBook Pro 2017',
+    brand: 'Apple',
+    model: 'MacBook Pro 2017',
+    category: 'Designer',
+    specs: { processor: 'Intel Core i5/i7 (2017)', ram: '8GB', storage: '256GB SSD', screen: 'Retina', battery: 'Awet', weight: 'Ringan' },
+    dailyRate: 150000,
+    weeklyRate: 900000,
+    monthlyRate: 3000000,
+    status: 'Available',
+    slug: 'macbook-pro-2017',
+    description: 'Premium, performa ngebut. Cocok untuk editing video/foto, desain, coding.',
+    partnerId: null,
+    photoUrl: null,
+  },
+  {
+    id: '4',
+    name: 'Lenovo ThinkPad X13',
+    brand: 'Lenovo',
+    model: 'ThinkPad X13',
+    category: 'Developer',
+    specs: { processor: 'Intel Core i7 Gen 10', ram: '8GB', storage: '512GB SSD', battery: 'Awet' },
+    dailyRate: 100000,
+    weeklyRate: 600000,
+    monthlyRate: 2000000,
+    status: 'Available',
+    slug: 'lenovo-thinkpad-x13',
+    description: 'Ringan, cepat, baterai awet. Cocok untuk produktivitas harian, coding, desain.',
+    partnerId: null,
+    photoUrl: null,
+  },
+  {
+    id: '5',
+    name: 'Dell Latitude 7310',
+    brand: 'Dell',
+    model: 'Latitude 7310',
+    category: 'Business',
+    specs: { processor: 'Intel Core i5-10310U', ram: '16GB', storage: '256GB SSD' },
+    dailyRate: 95000,
+    weeklyRate: 570000,
+    monthlyRate: 1900000,
+    status: 'Available',
+    slug: 'dell-latitude-7310',
+    description: 'Kuliah, kerja kantoran, editing ringan, meeting. Desain slim & elegan.',
+    partnerId: null,
+    photoUrl: null,
+  },
+  {
+    id: '6',
+    name: 'Dell Latitude 5400',
+    brand: 'Dell',
+    model: 'Latitude 5400',
+    category: 'Business',
+    specs: { processor: 'Intel Core i5-8365U', ram: '16GB', storage: '256GB SSD', battery: '2-3 jam' },
+    dailyRate: 85000,
+    weeklyRate: 510000,
+    monthlyRate: 1700000,
+    status: 'Available',
+    slug: 'dell-latitude-5400',
+    description: 'Cepat & responsif. Cocok untuk kerja kantoran, tugas kuliah, editing ringan, meeting.',
+    partnerId: null,
+    photoUrl: null,
+  },
+  {
+    id: '7',
+    name: 'Lenovo ThinkPad T480',
+    brand: 'Lenovo',
+    model: 'ThinkPad T480',
+    category: 'Developer',
+    specs: { processor: 'Intel Core i7-8550U', ram: '16GB',     storage: '1TB SSD', battery: 'Berjam-jam' },
+    dailyRate: 120000,
+    weeklyRate: 720000,
+    monthlyRate: 2400000,
+    status: 'Available',
+    slug: 'lenovo-thinkpad-t480',
+    description: 'Kencang, stabil, nyaman. Cocok untuk kerja, editing, kuliah, multitasking berat.',
+    partnerId: null,
+    photoUrl: null,
+  },
+  {
+    id: '8',
+    name: 'Dell Vostro 3400',
+    brand: 'Dell',
+    model: 'Vostro 3400',
+    category: 'Student',
+    specs: { processor: 'Intel Core i5-1135G7', ram: '8GB', storage: '256GB SSD' },
+    dailyRate: 65000,
+    weeklyRate: 390000,
+    monthlyRate: 1300000,
+    status: 'Available',
+    slug: 'dell-vostro-3400',
+    description: 'Performa cepat, desain elegan. Cocok untuk kerja, desain ringan, meeting.',
+    partnerId: null,
+    photoUrl: null,
+  },
+  {
+    id: '9',
+    name: 'Dell Latitude 7400',
+    brand: 'Dell',
+    model: 'Latitude 7400',
+    category: 'Business',
+    specs: { processor: 'Intel Core i5 Gen 8', ram: '16GB', storage: '512GB SSD' },
+    dailyRate: 110000,
+    weeklyRate: 660000,
+    monthlyRate: 2200000,
+    status: 'Available',
+    slug: 'dell-latitude-7400',
+    description: 'Laptop kelas bisnis, performa tinggi. Cocok untuk profesional.',
+    partnerId: null,
+    photoUrl: null,
+  },
+]
+
+export const laptopImage = (slug: string) => `/laptops/${slug}.jpg`
+
+export function formatIDR(value: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0,
+  }).format(value)
 }
 
 // --- Retained for /rekomendasi quiz compatibility ---
@@ -206,24 +215,17 @@ const BUDGET_MAX: Record<BudgetTier, number> = {
   '>6jt': Number.POSITIVE_INFINITY,
 }
 
-export function formatIDR(value: number): string {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    maximumFractionDigits: 0,
-  }).format(value)
-}
-
-export function recommendLaptop(answers: QuizAnswers): Recommendation {
+export function recommendLaptop(laptops: Laptop[], answers: QuizAnswers): Recommendation {
+  const list = laptops ?? []
   const category = CATEGORY_BY_JOB[answers.jobType] ?? 'Business'
   const budgetMax = BUDGET_MAX[answers.budget] ?? Number.POSITIVE_INFINITY
 
-  const candidates = LAPTOPS.filter(
-    (laptop) => laptop.category === category && laptop.monthlyRateIdr <= budgetMax,
+  const candidates = list.filter(
+    (laptop) => laptop.category === category && laptop.monthlyRate <= budgetMax,
   )
 
-  const pickBest = (list: Laptop[]) =>
-    list.reduce((best, laptop) => (laptop.monthlyRateIdr > best.monthlyRateIdr ? laptop : best))
+  const pickBest = (arr: Laptop[]) =>
+    arr.reduce((best, laptop) => (laptop.monthlyRate > best.monthlyRate ? laptop : best))
 
   if (candidates.length > 0) {
     const laptop = pickBest(candidates)
@@ -233,16 +235,16 @@ export function recommendLaptop(answers: QuizAnswers): Recommendation {
     }
   }
 
-  const inBudget = LAPTOPS.filter((laptop) => laptop.monthlyRateIdr <= budgetMax)
+  const inBudget = list.filter((laptop) => laptop.monthlyRate <= budgetMax)
   if (inBudget.length > 0) {
     const laptop = pickBest(inBudget)
     return {
       laptop,
-      reason: `Di kategori ${category} belum ada unit dalam budget Anda, tapi ${laptop.name} (${formatIDR(laptop.monthlyRateIdr)}/bulan) tetap yang terbaik di rentang ${formatIDR(budgetMax)} berkat ${laptop.specs.processor} + ${laptop.specs.ram}.`,
+      reason: `Di kategori ${category} belum ada unit dalam budget Anda, tapi ${laptop.name} (${formatIDR(laptop.monthlyRate)}/bulan) tetap yang terbaik di rentang ${formatIDR(budgetMax)} berkat ${laptop.specs.processor} + ${laptop.specs.ram}.`,
     }
   }
 
-  const laptop = pickBest([...LAPTOPS])
+  const laptop = pickBest([...list])
   return {
     laptop,
     reason: `Budget Anda di bawah semua opsi, jadi kami sarankan ${laptop.name} — unit paling hemat dengan ${laptop.specs.ram} dan ${laptop.specs.storage} yang tetap mumpuni.`,

@@ -47,7 +47,7 @@ export function generateBookingMessage(data: BookingMessageData): string {
   return lines.join('\n')
 }
 
-export const BUSINESS_WA = '6288292123852'
+export const BUSINESS_WA = '6281296352115'
 
 export function buildWaLink(phone: string, message: string): string {
   const digits = phone.replace(/[^\d]/g, '')

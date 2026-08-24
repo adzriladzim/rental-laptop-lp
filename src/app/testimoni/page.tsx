@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+import { Button } from '@/components/ui/Button'
 import { TESTIMONIALS } from '@/lib/testimonials'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 
@@ -95,14 +95,9 @@ export default function TestimoniPage() {
           </p>
         </div>
         <div className="flex flex-col gap-3 md:col-span-4 md:items-end">
-          <Link
-            href="/laptop"
-            className="inline-flex w-full items-center justify-center px-8 py-4 bg-accent text-accent-fg font-semibold rounded-lg hover:bg-accent/90 transition-colors md:w-auto"
-          >
-            Sewa Sekarang
-          </Link>
+          <Button href="/laptop" className="w-full md:w-auto">Sewa Sekarang</Button>
           <WhatsAppButton
-            phone="6288292123852"
+            phone="6281296352115"
             message="Halo! Saya lihat testimoni dan tertarik sewa laptop. Bisa bantu pilih unit?"
             className="inline-flex items-center text-green-600 hover:text-green-700 font-medium"
           >
