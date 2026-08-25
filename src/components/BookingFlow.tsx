@@ -447,37 +447,38 @@ export function BookingFlow({
         </form>
       )}
 
-      {/* STICKY NAV BAR */}
+      {/* STICKY NAV BAR — total di kiri, tombol bergrup di kanan */}
+      <div className="h-20" aria-hidden="true" />
       <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-border bg-paper/95 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-center gap-3 px-5 py-3">
-          {step !== 'success' && step > 1 && (
-            <button
-              type="button"
-              onClick={() => (step === 3 ? goStep2() : goStep1())}
-              className="min-h-[44px] rounded-lg border border-border bg-paper px-5 font-display font-semibold text-ink transition-colors hover:border-accent"
-            >
-              ←
-            </button>
-          )}
-          <div className="flex-1 text-right">
+          <div className="min-w-0 flex-1">
             {step === 2 && days > 0 && (
-              <span className="font-body text-xs text-ink-muted">
+              <span className="block truncate font-body text-xs text-ink-muted">
                 {days} hari · Total estimasi{' '}
                 <span className="font-display text-base text-ink">{formatIDR(estimate)}</span>
               </span>
             )}
             {step === 3 && (
-              <span className="font-body text-xs text-ink-muted">
+              <span className="block truncate font-body text-xs text-ink-muted">
                 Total{' '}
                 <span className="font-display text-base text-ink">{formatIDR(estimate)}</span>
               </span>
             )}
           </div>
+          {step !== 'success' && step > 1 && (
+            <button
+              type="button"
+              onClick={() => (step === 3 ? goStep2() : goStep1())}
+              className="inline-flex min-h-[44px] shrink-0 items-center gap-1 rounded-lg border border-border bg-paper px-4 font-display font-semibold text-ink transition-colors hover:border-accent"
+            >
+              <span aria-hidden="true">←</span> Kembali
+            </button>
+          )}
           {step === 1 && (
             <button
               type="button"
               onClick={goStep2}
-              className="min-h-[44px] rounded-lg bg-accent px-6 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90"
+              className="inline-flex min-h-[44px] shrink-0 items-center rounded-lg bg-accent px-6 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90"
             >
               Lanjut
             </button>
@@ -487,7 +488,7 @@ export function BookingFlow({
               type="button"
               onClick={goStep3}
               disabled={!startDate || !endDate}
-              className="min-h-[44px] rounded-lg bg-accent px-6 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90 disabled:opacity-50"
+              className="inline-flex min-h-[44px] shrink-0 items-center rounded-lg bg-accent px-6 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90 disabled:opacity-50"
             >
               Lanjut
             </button>
@@ -497,7 +498,7 @@ export function BookingFlow({
               type="button"
               onClick={handleSubmit}
               disabled={loading}
-              className="min-h-[44px] rounded-lg bg-accent px-6 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90 disabled:opacity-50"
+              className="inline-flex min-h-[44px] shrink-0 items-center rounded-lg bg-accent px-6 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90 disabled:opacity-50"
             >
               {loading ? 'Memproses…' : 'Pesan Sekarang'}
             </button>
