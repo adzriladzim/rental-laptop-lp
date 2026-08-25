@@ -243,6 +243,17 @@ export function BookingFlow({
   // ---------- WIZARD ----------
   return (
     <div className="mx-auto max-w-2xl px-5 pb-32">
+      {/* Kembali — kiri atas, standar navigasi wizard */}
+      {step !== 'success' && step > 1 && (
+        <button
+          type="button"
+          onClick={() => (step === 3 ? goStep2() : goStep1())}
+          className="mb-4 inline-flex min-h-[44px] items-center gap-1 rounded-lg border border-border bg-paper px-4 font-display font-semibold text-ink transition-colors hover:border-accent"
+        >
+          <span aria-hidden="true">←</span> Kembali
+        </button>
+      )}
+
       {/* Stepper */}
       <ol className="mb-6 flex items-center gap-2">
         {[
@@ -465,15 +476,6 @@ export function BookingFlow({
               </span>
             )}
           </div>
-          {step !== 'success' && step > 1 && (
-            <button
-              type="button"
-              onClick={() => (step === 3 ? goStep2() : goStep1())}
-              className="inline-flex min-h-[44px] shrink-0 items-center gap-1 rounded-lg border border-border bg-paper px-4 font-display font-semibold text-ink transition-colors hover:border-accent"
-            >
-              <span aria-hidden="true">←</span> Kembali
-            </button>
-          )}
           {step === 1 && (
             <button
               type="button"
