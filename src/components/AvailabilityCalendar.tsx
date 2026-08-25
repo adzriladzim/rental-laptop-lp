@@ -12,8 +12,6 @@ interface AvailabilityCalendarProps {
   live?: boolean
 }
 
-type Mode = 'single' | 'range'
-
 const WEEKDAYS = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
 const MONTH_NAMES = [
   'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -81,10 +79,15 @@ export function AvailabilityCalendar({
   const initial = new Date()
   const [viewYear, setViewYear] = useState(initial.getFullYear())
   const [viewMonth, setViewMonth] = useState(initial.getMonth() + 1) // 1-indexed
-  const [mode, setMode] = useState<Mode>('single')
-  const [picked, setPicked] = useState<string[]>([]) // single mode
-  const [rangeStart, setRangeStart] = useState<string | null>(null)
-  const [rangeEnd, setRangeEnd] = useState<string | null>(null)
+
+  // Unified selection flow (no modes):
+  //  - click 1: anchor date (single pick pending)
+  //  - click 2: range fills anchor→date (same date = confirmed single day)
+  //  - click a selected date: remove that day (for custom non-contiguous picks)
+  //  - click any other available date: start a fresh selection
+  const [anchor, setAnchor] = useState<string | null>(null)
+  const [pending, setPending] = useState(false) // anchor set, awaiting 2nd click
+  const [selected, setSelected] = useState<string[]>([])
 
   // live = range-level availability from API (whole-month granularity)
   const [liveBooked, setLiveBooked] = useState<boolean | null>(null)
@@ -143,59 +146,49 @@ export function AvailabilityCalendar({
 
   const isPast = (day: number) => toISO(viewYear, viewMonth, day) < today
 
-  const allSelected = useMemo(() => {
-    if (mode === 'single') return [...picked].sort()
-    if (rangeStart && rangeEnd) {
-      return expandRange(rangeStart <= rangeEnd ? rangeStart : rangeEnd, rangeStart <= rangeEnd ? rangeEnd : rangeStart)
-    }
-    return rangeStart ? [rangeStart] : []
-  }, [mode, picked, rangeStart, rangeEnd])
-
-  const selectedSet = useMemo(() => new Set(allSelected), [allSelected])
+  const selectedSet = useMemo(() => new Set(selected), [selected])
 
   const emit = (dates: string[]) => onSelectDates?.(dates)
-
-  const switchMode = (m: Mode) => {
-    setMode(m)
-    setPicked([])
-    setRangeStart(null)
-    setRangeEnd(null)
-    emit([])
-  }
 
   const handlePick = (day: number) => {
     const iso = toISO(viewYear, viewMonth, day)
     if (bookedSet.has(iso) || isPast(day)) return
 
-    if (mode === 'single') {
-      const next = picked.includes(iso) ? picked.filter((d) => d !== iso) : [...picked, iso]
-      setPicked(next)
-      emit([...next].sort())
+    // Awaiting 2nd click → build range (or confirm single day)
+    if (pending && anchor) {
+      if (iso === anchor) {
+        setPending(false)
+        setSelected([iso])
+        emit([iso])
+        return
+      }
+      const [a, b] = iso <= anchor ? [iso, anchor] : [anchor, iso]
+      const range = expandRange(a, b)
+      setPending(false)
+      setSelected(range)
+      emit(range)
       return
     }
 
-    // range mode
-    if (!rangeStart || (rangeStart && rangeEnd)) {
-      setRangeStart(iso)
-      setRangeEnd(null)
-      emit([iso])
+    // Selection complete → toggle off picked days, else start fresh
+    if (selectedSet.has(iso)) {
+      const next = selected.filter((d) => d !== iso)
+      setSelected(next)
+      setAnchor(next.length > 0 ? anchor : null)
+      emit(next)
       return
     }
-    if (iso === rangeStart) {
-      setRangeStart(null)
-      setRangeEnd(null)
-      emit([])
-      return
-    }
-    setRangeEnd(iso)
-    const [a, b] = iso <= rangeStart ? [iso, rangeStart] : [rangeStart, iso]
-    emit(expandRange(a, b))
+
+    setAnchor(iso)
+    setPending(true)
+    setSelected([iso])
+    emit([iso])
   }
 
   const clearAll = () => {
-    setPicked([])
-    setRangeStart(null)
-    setRangeEnd(null)
+    setAnchor(null)
+    setPending(false)
+    setSelected([])
     emit([])
   }
 
@@ -217,36 +210,19 @@ export function AvailabilityCalendar({
     }
   }
 
-  const inRangeBand = (iso: string): boolean => {
-    if (mode !== 'range' || !rangeStart || !rangeEnd) return false
-    const [a, b] = rangeStart <= rangeEnd ? [rangeStart, rangeEnd] : [rangeEnd, rangeStart]
-    return iso >= a && iso <= b
-  }
+  // Preview band while awaiting 2nd click (hover-independent: anchor→today's hovered cell is
+  // skipped for simplicity; band only shows after range is chosen)
+  const hint = pending
+    ? 'Sekarang klik tanggal akhir — atau klik tanggal yang sama lagi untuk sewa 1 hari.'
+    : selected.length > 0
+      ? 'Klik tanggal terpilih untuk membuang hari itu. Klik tanggal lain untuk mulai pilih baru.'
+      : 'Klik tanggal mulai, lalu klik tanggal akhir — rentang langsung terisi.'
 
   return (
     <div className="w-full">
-      {/* Mode switch */}
       <div className="mb-4 flex items-center justify-between gap-3">
-        <div className="inline-flex rounded-lg border border-border bg-paper-subtle p-1">
-          {(
-            [
-              ['single', 'Per Tanggal'],
-              ['range', 'Rentang'],
-            ] as [Mode, string][]
-          ).map(([m, label]) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => switchMode(m)}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${
-                mode === m ? 'bg-paper text-ink shadow-card' : 'text-ink-muted hover:text-ink'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        {allSelected.length > 0 && (
+        <h3 className="font-display text-lg text-ink">Pilih Tanggal Sewa</h3>
+        {selected.length > 0 && (
           <button
             type="button"
             onClick={clearAll}
@@ -266,9 +242,9 @@ export function AvailabilityCalendar({
         >
           {'<'}
         </button>
-        <h3 className="font-display text-lg text-ink">
+        <p className="font-display text-lg text-ink">
           {MONTH_NAMES[viewMonth - 1]} {viewYear}
-        </h3>
+        </p>
         <button
           type="button"
           onClick={goNext}
@@ -282,13 +258,7 @@ export function AvailabilityCalendar({
       {note && (
         <p className="mb-2 font-body text-xs text-ink-muted">{note}</p>
       )}
-      {mode === 'range' && (
-        <p className="mb-2 font-body text-xs text-ink-muted">
-          {rangeStart && !rangeEnd
-            ? 'Sekarang pilih tanggal akhir.'
-            : 'Klik tanggal mulai, lalu tanggal akhir.'}
-        </p>
-      )}
+      <p className="mb-2 font-body text-xs text-ink-muted" aria-live="polite">{hint}</p>
 
       <div className="grid grid-cols-7 gap-1 text-center">
         {WEEKDAYS.map((w) => (
@@ -303,7 +273,7 @@ export function AvailabilityCalendar({
           const past = isPast(day)
           const isToday = iso === today
           const isSelected = selectedSet.has(iso)
-          const band = inRangeBand(iso) && !isSelected
+          const isAnchor = pending && iso === anchor
           const disabled = booked || past
           let cls =
             'aspect-square grid place-items-center rounded-md text-sm font-body border transition-colors'
@@ -311,7 +281,7 @@ export function AvailabilityCalendar({
           else if (past)
             cls += ' bg-paper-subtle/50 text-ink-muted/60 border-transparent cursor-not-allowed'
           else if (isSelected) cls += ' bg-accent text-accent-fg border-accent font-semibold cursor-pointer'
-          else if (band) cls += ' bg-accent/15 text-ink border-accent/30 cursor-pointer'
+          else if (isAnchor) cls += ' bg-accent/25 text-ink border-accent cursor-pointer animate-pulse'
           else cls += ' bg-accent/10 text-ink border-accent/40 hover:bg-accent/20 cursor-pointer'
           if (isToday && !isSelected) cls += ' ring-2 ring-accent ring-offset-1 ring-offset-paper'
           return (
@@ -331,10 +301,10 @@ export function AvailabilityCalendar({
       </div>
 
       {/* Selection summary */}
-      {allSelected.length > 0 && (
+      {selected.length > 0 && (
         <div className="mt-3 rounded-lg bg-accent/10 border border-accent/30 px-3 py-2 text-sm">
-          <span className="font-semibold text-ink">{formatDatesSummary(allSelected)}</span>
-          <span className="text-ink-muted"> · {allSelected.length} hari dipilih</span>
+          <span className="font-semibold text-ink">{formatDatesSummary(selected)}</span>
+          <span className="text-ink-muted"> · {selected.length} hari dipilih</span>
         </div>
       )}
 

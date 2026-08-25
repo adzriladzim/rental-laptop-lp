@@ -71,6 +71,18 @@ export interface BookingStatus {
   startDate: string
   endDate: string
   actualReturnDate?: string | null
+  laptop?: { name: string; slug: string } | null
+}
+
+export interface BookingLookup {
+  bookingNumber: string
+  status: string
+  paymentStatus: string | null
+  startDate: string
+  endDate: string
+  totalAmount: number
+  laptop: { name: string; slug: string }
+  createdAt: string
 }
 
 export interface BusinessSettings {
@@ -80,6 +92,7 @@ export interface BusinessSettings {
   address: string
   currency: string
   timezone: string
+  bank?: { name: string; accountNumber: string; accountHolder: string }
 }
 
 export class ApiError extends Error {
@@ -158,8 +171,18 @@ export function getAvailability(
   })
 }
 
-export function createBooking(payload: BookingPayload): Promise<{ bookingNumber: string }> {
-  return publicApi<{ bookingNumber: string }>('/public/bookings', {
+export interface BookingCreateResult {
+  bookingNumber: string
+  status: string
+  paymentStatus: string
+  totalAmount: number
+  startDate: string
+  endDate: string
+  laptop: { id: string; name: string; slug: string }
+}
+
+export function createBooking(payload: BookingPayload): Promise<BookingCreateResult> {
+  return publicApi<BookingCreateResult>('/public/bookings', {
     method: 'POST',
     body: JSON.stringify(payload),
   })
@@ -169,6 +192,12 @@ export function getBookingStatus(bookingNumber: string): Promise<BookingStatus> 
   return publicApi<BookingStatus>(
     `/public/bookings/${encodeURIComponent(bookingNumber)}/status`,
     { next: { revalidate: 60 } },
+  )
+}
+
+export function getBookingLookup(phone: string): Promise<BookingLookup[]> {
+  return publicApi<BookingLookup[]>(
+    `/public/bookings/lookup?phone=${encodeURIComponent(phone)}`,
   )
 }
 

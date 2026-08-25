@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { AvailabilityCalendar, formatDatesSummary } from '@/components/AvailabilityCalendar'
 import { LocationPicker, mapsLinkFor } from '@/components/LocationPicker'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
@@ -119,6 +120,13 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
         <div className="rounded-2xl border border-border bg-paper p-6">
           <LocationPicker value={location} onChange={setLocation} />
         </div>
+
+        <Link
+          href={`/pesan?unit=${laptop.slug}`}
+          className="block w-full rounded-lg bg-accent px-6 py-4 text-center font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90"
+        >
+          Pesan Sekarang
+        </Link>
 
         <WhatsAppButton
           phone={BUSINESS_WA}
