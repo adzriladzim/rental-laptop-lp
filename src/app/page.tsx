@@ -24,7 +24,7 @@ export default function Home() {
             {/* Content - Left bias */}
             <div className="lg:col-span-7 xl:col-span-6 animate-fade-up">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-bold tracking-tight text-ink mb-6">
-                Laptop <em className="text-accent italic">Tepat</em> untuk Setiap Proyek
+                 Laptop <em className="text-accent italic">Tepat</em>{' '}untuk Setiap Proyek
               </h1>
               <p className="text-lg lg:text-xl text-ink-muted leading-relaxed mb-8 max-w-2xl">
                 Sistem rekomendasi cerdas membantu Anda menemukan laptop yang sesuai kebutuhan. 

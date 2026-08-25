@@ -15,6 +15,38 @@ type Filter = 'All' | LaptopCategory
 
 const FILTERS: Filter[] = ['All', ...LAPTOP_CATEGORIES]
 
+function LaptopImage({ laptop }: { laptop: Laptop }) {
+  const [errored, setErrored] = useState(false)
+  const src = laptop.photoUrl ?? laptopImage(laptop.slug)
+  if (errored) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-paper-subtle">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          className="h-14 w-14 text-ink/30"
+          aria-hidden
+        >
+          <rect x="3" y="4" width="18" height="12" rx="1" />
+          <path strokeLinecap="round" d="M2 20h20" />
+        </svg>
+      </div>
+    )
+  }
+  return (
+    <Image
+      src={src}
+      alt={laptop.name}
+      fill
+      sizes="(max-width: 768px) 100vw, 33vw"
+      className="object-cover"
+      onError={() => setErrored(true)}
+    />
+  )
+}
+
 export function LaptopCatalog({ laptops }: { laptops: Laptop[] }) {
   const [active, setActive] = useState<Filter>('All')
   const visible = active === 'All' ? laptops : laptops.filter((l) => l.category === active)
@@ -48,14 +80,8 @@ export function LaptopCatalog({ laptops }: { laptops: Laptop[] }) {
             href={`/laptop/${laptop.slug}`}
             className="group mb-5 block break-inside-avoid overflow-hidden rounded-2xl border border-border bg-paper shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-lift"
           >
-            <div className="relative aspect-[4/3] w-full">
-              <Image
-                src={laptopImage(laptop.slug)}
-                alt={laptop.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover"
-              />
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-paper-subtle">
+              <LaptopImage laptop={laptop} />
             </div>
             <div className="p-6">
               <div className="mb-3 flex items-center justify-between gap-3">
