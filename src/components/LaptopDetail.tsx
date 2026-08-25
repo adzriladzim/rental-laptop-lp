@@ -51,6 +51,11 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
           <span className="font-body text-xs text-ink-muted">
             {laptop.brand} · {laptop.model}
           </span>
+          {laptop.quantity && laptop.quantity > 1 && (
+            <span className="rounded-full border border-accent/50 bg-accent/10 px-2 py-0.5 font-body text-xs font-semibold text-accent">
+              {laptop.quantity} Unit Tersedia
+            </span>
+          )}
         </div>
         <h1 className="mb-4 font-display text-4xl leading-tight text-ink sm:text-5xl">
           {laptop.name}

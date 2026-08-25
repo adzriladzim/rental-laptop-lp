@@ -88,7 +88,14 @@ export function LaptopCatalog({ laptops }: { laptops: Laptop[] }) {
                 <span className="font-body text-xs uppercase tracking-wider text-accent">
                   {laptop.category}
                 </span>
-                <span className="font-body text-xs text-ink-muted">{laptop.brand}</span>
+                <span className="flex items-center gap-2">
+                  <span className="font-body text-xs text-ink-muted">{laptop.brand}</span>
+                  {laptop.quantity && laptop.quantity > 1 && (
+                    <span className="rounded-full border border-accent/50 bg-accent/10 px-2 py-0.5 font-body text-xs font-semibold text-accent">
+                      {laptop.quantity} Unit
+                    </span>
+                  )}
+                </span>
               </div>
               <h2 className="mb-1 font-display text-xl text-ink">{laptop.name}</h2>
               <p className="mb-4 line-clamp-2 font-body text-sm text-ink-muted">

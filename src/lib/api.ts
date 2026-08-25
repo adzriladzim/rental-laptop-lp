@@ -30,6 +30,7 @@ export type Laptop = {
   slug: string
   description: string
   partnerId: string | null
+  quantity?: number
   photoUrl?: string | null
 }
 
