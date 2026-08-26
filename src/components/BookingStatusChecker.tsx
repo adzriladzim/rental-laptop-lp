@@ -385,16 +385,24 @@ export function BookingStatusChecker({ initialNo }: { initialNo?: string }) {
           )}
 
           {/* WA CTA */}
-          <div className="mt-6 flex flex-col gap-2 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-6 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
             <span className="font-body text-sm text-ink-muted">Butuh bantuan?</span>
-            <a
-              href={buildWaLink(BUSINESS_WA, waStatusMsg)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-wa px-6 font-display font-semibold text-white transition-colors hover:bg-wa/90"
-            >
-              Tanya Status via WA
-            </a>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={`/invoice?no=${detail.bookingNumber}`}
+                className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-border bg-paper px-6 font-display font-semibold text-ink transition-colors hover:border-accent"
+              >
+                Lihat Invoice
+              </Link>
+              <a
+                href={buildWaLink(BUSINESS_WA, waStatusMsg)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-wa px-6 font-display font-semibold text-white transition-colors hover:bg-wa/90"
+              >
+                Tanya Status via WA
+              </a>
+            </div>
           </div>
         </div>
       )}

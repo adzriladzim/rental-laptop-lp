@@ -196,6 +196,24 @@ export function getBookingStatus(bookingNumber: string): Promise<BookingStatus> 
   )
 }
 
+// Richer shape for the public invoice view. The backend status endpoint may
+// optionally include customer + deposit fields; all are treated as optional so
+// the invoice degrades gracefully when they are absent.
+export interface InvoiceBooking extends BookingStatus {
+  customerName?: string | null
+  customerPhone?: string | null
+  depositAmount?: number | null
+  lateFee?: number | null
+  totalPenalty?: number | null
+}
+
+export function getBookingInvoice(bookingNumber: string): Promise<InvoiceBooking> {
+  return publicApi<InvoiceBooking>(
+    `/public/bookings/${encodeURIComponent(bookingNumber)}/status`,
+    { next: { revalidate: 60 } },
+  )
+}
+
 export function getBookingLookup(phone: string): Promise<BookingLookup[]> {
   return publicApi<BookingLookup[]>(
     `/public/bookings/lookup?phone=${encodeURIComponent(phone)}`,
