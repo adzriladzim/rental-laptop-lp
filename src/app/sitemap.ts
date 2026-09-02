@@ -14,11 +14,17 @@ const STATIC_ROUTES = [
   '/faq',
   '/panduan',
   '/rekomendasi',
-  '/ketersediaan',
   '/status',
   '/korporat',
   '/tentang',
   '/legal/syarat-ketentuan',
+  '/kategori/developer',
+  '/kategori/designer',
+  '/kategori/student',
+  '/kategori/business',
+  '/kategori/gaming',
+  '/pesan',
+  '/invoice',
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

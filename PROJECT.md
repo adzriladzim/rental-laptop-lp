@@ -1,12 +1,12 @@
 # PROJECT: Laptop Rental Landing Page
 
-**Date:** 2026-08-23  
-**Status:** Phase 1 Implementation  
+**Date:** 2026-08-31
+**Status:** Hybrid Booking Flow — Active
 **Reference:** Savanna Bromo rental system + PRD laptop-rental-prd.md
 
 ## Project Overview
 
-Landing page untuk platform rental laptop dengan focus anti-AI-slop design dan WhatsApp integration.
+Landing page untuk platform rental laptop dengan hybrid booking flow (web cek ketersediaan + WA sebagai backup).
 
 ## Tech Stack
 
@@ -14,25 +14,49 @@ Landing page untuk platform rental laptop dengan focus anti-AI-slop design dan W
 - **Styling:** Tailwind CSS v4 + Hallmark design system
 - **Design:** Anti-AI-slop (no purple gradients, asymmetric layouts, display+body fonts)
 - **Integration:** WhatsApp Web API (free) + structured message templates
+- **Backend:** Express API at `localhost:8787` — `/public/availability` endpoint
 
-## Key Features (Phase 1)
+## Booking Flow (Hybrid — 31 Aug 2026)
 
-1. **Recommendation Quiz** — 5 pertanyaan → suggest laptop sesuai kebutuhan
-2. **Real-time Availability** — calendar view unit tersedia/tidak
-3. **WhatsApp Integration** — generate structured booking message
-4. **Smart Template** — pre-filled customer details + rental info + pricing
-
-## Architecture
+Web = opsional cek ketersediaan mandiri. WA bukan channel utama — user bisa langsung pesan via web.
 
 ```
-Landing Page Flow:
+Flow:
 1. Hero + Value Prop
 2. Recommendation Quiz (Developer/Designer/Student/Gaming)
-3. Availability Calendar
-4. Customer Details Form
-5. Generate WhatsApp Template
-6. Redirect to wa.me with structured message
+3. /pesan → BookingFlow (step-based)
+   S1: Pilih laptop (LaptopMatcher)
+   S2: Pilih tanggal (AvailabilityCalendar — auto-fetch GET /public/availability)
+   S3: Isi data + submit (race fix: counter, single-day fix, 409 handling)
+   S4: Sukses → redirect /berhasil + WA backup (opsional)
+4. WA fallback: generate structured message → wa.me redirect
 ```
+
+## Key Components
+
+- `src/app/pesan/page.tsx` — Booking page (replaced /ketersediaan)
+- `src/components/booking/BookingFlow.tsx` — Multi-step booking (~470 lines)
+- `src/components/booking/LaptopMatcher.tsx` — Laptop selection (Pesan=primary, WA=secondary)
+- `src/components/booking/AvailabilityCalendar.tsx` — Calendar view (auto availability, no mock data)
+- `src/components/booking/ContactForm.tsx` — API-only form submission
+- `src/components/SiteHeader.tsx` — CTA changed to /pesan
+- `src/lib/availability.ts` — DELETED (moved to backend API)
+- `src/components/AvailabilityChecker.tsx` — DELETED
+- `src/app/ketersediaan/page.tsx` — DELETED
+
+## Dev Servers
+
+| Server | Port | Purpose |
+|--------|------|---------|
+| LP | 3000 | Landing page (Next.js) |
+| BY | 5173 | Backyard (admin) |
+| BE | 8787 | Backend API (Express) |
+
+## Review Fixes Applied
+
+- **S2 race condition:** counter-based optimistic lock di BookingFlow
+- **S3 single-day booking:** date picker fix + coarse availability check
+- **S4 FAQ/metadata:** updated FAQ content + page metadata
 
 ## Design System (Hallmark)
 
@@ -42,21 +66,13 @@ Landing Page Flow:
 - **Layout:** Asymmetric bias (NOT centered everything)
 - **Motion:** Exponential ease-out, reduced-motion alternatives
 
-## Key Files
-
-- `src/app/page.tsx` — Homepage
-- `src/app/rekomendasi/page.tsx` — Recommendation quiz
-- `src/app/ketersediaan/page.tsx` — Availability calendar  
-- `src/components/WhatsAppBooking.tsx` — WhatsApp integration
-- `src/lib/laptops.ts` — Laptop data + recommendation logic
-- `src/lib/whatsapp.ts` — WhatsApp template generator
-
 ## Business Requirements
 
 - **Target:** Expand from Instagram-only to web platform
 - **Goal:** Structured lead generation → WhatsApp conversion
 - **Advantage:** Real-time availability + smart recommendations
 - **Reference:** Savanna Bromo trail rental system
+- **Client req:** Web = opsi mandiri cek ketersediaan, WA bukan utama
 
 ## Development Commands
 
@@ -66,10 +82,6 @@ npm run build   # Production build
 npm run lint    # ESLint check
 ```
 
-## Next Steps
+## Uncommitted Changes (13 files)
 
-- [ ] Setup Hallmark design system
-- [ ] Create recommendation quiz logic
-- [ ] Build availability calendar
-- [ ] Implement WhatsApp integration
-- [ ] Deploy to Vercel/Netlify
+Modified/deleted: AvailabilityChecker.tsx, lib/availability.ts, app/ketersediaan/page.tsx, BookingFlow.tsx, AvailabilityCalendar.tsx, LaptopMatcher.tsx, SiteHeader.tsx, ContactForm.tsx, faq.ts, page.tsx metadata, sitemap. **BELUM commit — tunggu instruksi user.**

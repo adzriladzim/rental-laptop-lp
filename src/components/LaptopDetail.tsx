@@ -33,6 +33,7 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
 
   return (
     <div className="grid gap-10 lg:grid-cols-12">
+      {/* Main content */}
       <div className="lg:col-span-7">
         <div className="relative mb-6 aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-card">
           <Image
@@ -44,25 +45,30 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
             className="object-cover"
           />
         </div>
-        <div className="mb-3 flex items-center gap-3">
-          <span className="font-body text-xs uppercase tracking-wider text-accent">
+
+        {/* Category + brand */}
+        <div className="mb-3 flex flex-wrap items-center gap-3">
+          <span className="font-display text-xs font-semibold uppercase tracking-wider text-ink">
             {laptop.category}
           </span>
-          <span className="font-body text-xs text-ink-muted">
+          <span className="text-sm text-ink-muted">
             {laptop.brand} · {laptop.model}
           </span>
           {laptop.quantity && laptop.quantity > 1 && (
-            <span className="rounded-full border border-accent/50 bg-accent/10 px-2 py-0.5 font-body text-xs font-semibold text-accent">
+            <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 font-display text-xs font-semibold text-ink">
               {laptop.quantity} Unit Tersedia
             </span>
           )}
         </div>
-        <h1 className="mb-4 font-display text-4xl leading-tight text-ink sm:text-5xl">
+
+        {/* Title */}
+        <h1 className="mb-4 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl lg:text-5xl">
           {laptop.name}
         </h1>
-        <p className="mb-8 max-w-2xl font-body text-lg text-ink-muted">{laptop.description}</p>
+        <p className="mb-8 max-w-2xl text-lg leading-relaxed text-ink-muted">{laptop.description}</p>
 
-        <h2 className="mb-4 font-display text-xl text-ink">Spesifikasi</h2>
+        {/* Specs table */}
+        <h2 className="mb-4 font-display text-xl font-semibold text-ink">Spesifikasi</h2>
         <dl className="overflow-hidden rounded-2xl border border-border">
           {specsRows
             .filter(([, v]) => v)
@@ -73,17 +79,19 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
                   i % 2 ? 'bg-paper-subtle' : 'bg-paper'
                 }`}
               >
-                <dt className="font-body text-sm text-ink-muted">{label}</dt>
-                <dd className="text-right font-body text-sm font-medium text-ink">{value}</dd>
+                <dt className="text-sm text-ink-muted">{label}</dt>
+                <dd className="text-right text-sm font-medium text-ink">{value}</dd>
               </div>
             ))}
         </dl>
       </div>
 
+      {/* Sidebar: pricing + calendar + CTA */}
       <aside className="space-y-6 lg:col-span-5">
+        {/* Pricing card */}
         <div className="rounded-2xl border border-border bg-paper-subtle p-6">
-          <h2 className="mb-4 font-display text-xl text-ink">Harga Sewa</h2>
-          <div className="space-y-3">
+          <h2 className="mb-4 font-display text-xl font-semibold text-ink">Harga Sewa</h2>
+          <div className="space-y-2">
             {(
               [
                 ['Harian · 1–2 hari', laptop.dailyRate, '/hari'],
@@ -94,49 +102,58 @@ export function LaptopDetail({ laptop }: { laptop: Laptop }) {
             ).map(([label, price, suffix]) => (
               <div
                 key={label}
-                className={`flex items-center justify-between rounded-lg px-4 py-3 ${
-                  label.startsWith('Bulanan') ? 'bg-accent/10 ring-1 ring-accent/40' : 'bg-paper'
+                className={`flex items-center justify-between rounded-xl px-4 py-3 ${
+                  label.startsWith('Bulanan')
+                    ? 'border border-accent/30 bg-accent/10'
+                    : 'bg-paper'
                 }`}
               >
-                <span className="font-body text-sm text-ink">
+                <span className="text-sm text-ink">
                   {label}
-                  {label.startsWith('Bulanan') ? ' · paling hemat' : ''}
+                  {label.startsWith('Bulanan') && (
+                    <span className="ml-1.5 rounded-full bg-accent px-2 py-0.5 font-display text-xs font-semibold text-accent-fg">
+                      Hemat
+                    </span>
+                  )}
                 </span>
-                <span className="font-display text-lg text-ink">
+                <span className="font-display text-lg font-bold text-ink">
                   {formatIDR(price)}
-                  {suffix && <span className="font-body text-xs text-ink-muted">{suffix}</span>}
+                  {suffix && <span className="text-xs font-normal text-ink-muted">{suffix}</span>}
                 </span>
               </div>
             ))}
           </div>
         </div>
 
+        {/* Calendar card */}
         <div className="rounded-2xl border border-border bg-paper p-6">
-          <h2 className="mb-4 font-display text-xl text-ink">Cek Ketersediaan</h2>
+          <h2 className="mb-4 font-display text-xl font-semibold text-ink">Cek Ketersediaan</h2>
           <AvailabilityCalendar
             laptopId={laptop.id}
-            laptopSlug={laptop.slug}
             laptopCategory={laptop.category}
-            live
+            laptopSlug={laptop.slug}
             onSelectDates={setSelectedDates}
           />
         </div>
 
+        {/* Location card */}
         <div className="rounded-2xl border border-border bg-paper p-6">
           <LocationPicker value={location} onChange={setLocation} />
         </div>
 
+        {/* Primary CTA */}
         <Link
           href={`/pesan?unit=${laptop.slug}`}
-          className="block w-full rounded-lg bg-accent px-6 py-4 text-center font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90"
+          className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-accent px-6 font-display text-base font-semibold text-accent-fg shadow-sm transition-all hover:bg-accent-hover hover:shadow-glow"
         >
           Pesan Sekarang
         </Link>
 
+        {/* WhatsApp CTA */}
         <WhatsAppButton
           phone={BUSINESS_WA}
           message={message}
-          className="block w-full rounded-lg bg-accent px-6 py-4 text-center font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90"
+          className="flex min-h-[48px] w-full items-center justify-center rounded-xl bg-wa px-6 font-display text-base font-semibold text-white transition-all hover:opacity-90"
         >
           {selectedDates.length > 0
             ? `Sewa via WhatsApp — ${formatDatesSummary(selectedDates)}`

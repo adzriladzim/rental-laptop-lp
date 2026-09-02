@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
-import { buildWaLink, BUSINESS_WA } from '@/lib/whatsapp'
+import { BUSINESS_WA } from '@/lib/whatsapp'
 import { submitLead } from '@/lib/api'
 
 interface ContactFormProps {
@@ -28,22 +28,10 @@ export function ContactForm({ laptops }: ContactFormProps) {
     /^\S+@\S+\.\S+$/.test(email) &&
     interest !== ''
 
-  const openWhatsApp = () => {
-    const text =
-      `Halo, saya tertarik sewa laptop.\n` +
-      `Nama: ${name}\n` +
-      `No. HP: ${phone}\n` +
-      `Email: ${email}\n` +
-      `Laptop minat: ${interest}\n` +
-      `Pesan: ${message || '-'}`
-    window.open(buildWaLink(BUSINESS_WA, text), '_blank', 'noopener,noreferrer')
-  }
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!valid) return
     setSubmitting(true)
-    openWhatsApp()
     try {
       await submitLead({
         name,
@@ -55,7 +43,6 @@ export function ContactForm({ laptops }: ContactFormProps) {
       })
       setStatus('success')
     } catch {
-      // WhatsApp already opened — lead capture failed, surface retry.
       setStatus('error')
     } finally {
       setSubmitting(false)
@@ -146,19 +133,30 @@ export function ContactForm({ laptops }: ContactFormProps) {
         disabled={!valid || submitting}
         className="inline-flex w-full items-center justify-center rounded-lg bg-accent px-6 py-4 font-display font-semibold text-accent-fg transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-40"
       >
-        {submitting ? 'Mengirim…' : 'Kirim via WhatsApp'}
+        {submitting ? 'Mengirim…' : 'Kirim Inquiry'}
       </button>
+      <p className="text-center text-xs text-ink-muted">
+        Ingin langsung chat?{' '}
+        <a
+          href={`https://wa.me/${BUSINESS_WA.replace(/[^\d]/g, '')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-ink"
+        >
+          Buka WhatsApp
+        </a>
+      </p>
       {!valid && status === 'idle' && (
         <p className="text-xs text-ink-muted">Nama, WhatsApp, email, dan laptop wajib diisi.</p>
       )}
       {status === 'success' && (
         <p className="rounded-lg bg-green-100 px-4 py-3 text-sm font-medium text-green-700" role="status">
-          Inquiry terkirim! Lanjut ke WhatsApp…
+          Inquiry terkirim! Tim kami akan menghubungi Anda segera.
         </p>
       )}
       {status === 'error' && (
         <div className="rounded-lg bg-amber-100 px-4 py-3 text-sm text-amber-800" role="alert">
-          <p>WhatsApp terbuka, tapi penyimpanan inquiry gagal.</p>
+          <p>Gagal mengirim inquiry. Silakan coba lagi atau hubungi via WhatsApp.</p>
           <button
             type="button"
             onClick={handleRetry}

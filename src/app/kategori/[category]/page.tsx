@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
   LAPTOP_CATEGORIES,
+  USE_CASES,
   formatIDR,
   laptopImage,
   type LaptopCategory,
@@ -78,14 +79,31 @@ export default async function CategoryPage({
   }
   const catLaptops = laptops.filter((l) => l.category === cat)
 
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rental-laptop-lp.vercel.app'
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Beranda', item: baseUrl },
+      { '@type': 'ListItem', position: 2, name: 'Kategori', item: `${baseUrl}/kategori/${category}` },
+      { '@type': 'ListItem', position: 3, name: cat, item: `${baseUrl}/kategori/${category}` },
+    ],
+  }
+
   return (
     <main className="mx-auto max-w-7xl px-5 py-12 sm:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Hero — asymmetric, left-biased */}
       <header className="mb-12 grid gap-6 md:grid-cols-12">
         <div className="md:col-span-7">
-          <p className="font-body text-sm uppercase tracking-widest text-accent">Kategori</p>
+          <p className="font-body text-sm uppercase tracking-widest text-ink">Kategori</p>
           <h1 className="mt-2 font-display text-4xl sm:text-5xl text-ink leading-tight">
-            Laptop <em className="text-accent italic">{cat}</em>
+            Laptop <em className="text-ink italic">{cat}</em>
           </h1>
           <p className="mt-4 max-w-xl font-body text-base text-ink-muted">
             {CATEGORY_INFO[cat].description}
@@ -120,7 +138,7 @@ export default async function CategoryPage({
               </div>
               <div className="p-6">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <span className="font-body text-xs uppercase tracking-wider text-accent">
+                  <span className="font-body text-xs uppercase tracking-wider text-ink">
                     {laptop.brand}
                   </span>
                   <span className="font-body text-xs text-ink-muted">{laptop.category}</span>
@@ -129,6 +147,25 @@ export default async function CategoryPage({
                 <p className="mb-4 line-clamp-2 font-body text-sm text-ink-muted">
                   {laptop.description}
                 </p>
+
+                {/* Use-case tags */}
+                {laptop.useCases && laptop.useCases.length > 0 && (
+                  <div className="mb-4 flex flex-wrap gap-1.5">
+                    {laptop.useCases.slice(0, 3).map((ucId) => {
+                      const uc = USE_CASES.find((u) => u.id === ucId)
+                      if (!uc) return null
+                      return (
+                        <span
+                          key={ucId}
+                          className="inline-flex items-center gap-1 rounded-full border border-border bg-paper-subtle px-2 py-0.5 font-body text-xs text-ink-muted"
+                        >
+                          {uc.icon} {uc.label}
+                        </span>
+                      )
+                    })}
+                  </div>
+                )}
+
                 <dl className="mb-5 space-y-1 font-body text-sm text-ink-muted">
                   <div className="flex justify-between gap-2">
                     <dt>Prosesor</dt>
@@ -142,7 +179,7 @@ export default async function CategoryPage({
                 <div className="flex items-end justify-between gap-3 border-t border-border pt-4">
                   <div>
                     <p className="font-body text-xs text-ink-muted">Mulai dari</p>
-                    <p className="font-display text-lg text-accent">
+                    <p className="font-display text-lg text-ink">
                       {formatIDR(laptop.dailyRate)}
                       <span className="text-sm text-ink-muted">/hari</span>
                     </p>
@@ -159,12 +196,12 @@ export default async function CategoryPage({
         <section className="rounded-2xl border border-dashed border-border bg-paper-subtle p-10 text-center">
           <p className="font-display text-xl text-ink">Unit kategori {cat} belum tersedia</p>
           <p className="mt-2 font-body text-ink-muted">
-            Hubungi kami untuk request laptop gaming atau kategori lain sesuai kebutuhan.
+            Hubungi kami untuk request laptop sesuai kebutuhan Anda.
           </p>
           <WhatsAppButton
             phone="6281296352115"
-            message="Halo! Saya butuh laptop gaming untuk sewa. Apakah tersedia?"
-            className="mt-5 inline-flex items-center text-green-600 hover:text-green-700 font-medium"
+            message="Halo! Saya butuh laptop untuk sewa. Apakah tersedia?"
+            className="mt-5 inline-flex items-center text-green-700 hover:text-green-800 font-medium"
           >
             Chat WhatsApp
           </WhatsAppButton>

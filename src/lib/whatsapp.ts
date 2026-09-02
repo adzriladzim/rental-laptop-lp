@@ -15,7 +15,7 @@ export interface BookingMessageData {
 
 export function generateBookingMessage(data: BookingMessageData): string {
   const lines = [
-    '🏢 LAPTOP RENTAL INQUIRY',
+    '🏢 SEWAINTOP INQUIRY',
     '──────────────────────────',
     '',
     '👤 DATA PELANGGAN',
@@ -42,7 +42,7 @@ export function generateBookingMessage(data: BookingMessageData): string {
     lines.push('', `📝 CATATAN`, data.notes.trim())
   }
 
-  lines.push('', '— dikirim dari laptop-rental.com')
+  lines.push('', '— dikirim dari sewaintop.com')
 
   return lines.join('\n')
 }

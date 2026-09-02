@@ -1,7 +1,12 @@
 import type { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 import { getLaptops } from '@/lib/api'
 import { FALLBACK_LAPTOPS, type Laptop } from '@/lib/laptops'
-import { BookingFlow } from '@/components/BookingFlow'
+
+const BookingFlow = dynamic(
+  () => import('@/components/BookingFlow').then((m) => m.BookingFlow),
+  { loading: () => <div className="py-16 text-center font-body text-ink-muted">Memuat…</div> },
+)
 
 export const metadata: Metadata = {
   title: 'Pesan Sewa Laptop — Booking Mandiri',
@@ -28,7 +33,7 @@ export default async function PesanPage({
   return (
     <main className="mx-auto max-w-6xl px-5 py-10 sm:py-14">
       <header className="mb-8">
-        <p className="font-body text-sm uppercase tracking-widest text-accent">Pesan Sekarang</p>
+        <p className="font-body text-sm uppercase tracking-widest text-ink">Pesan Sekarang</p>
         <h1 className="mt-2 font-display text-3xl text-ink sm:text-4xl">Booking Mandiri</h1>
         <p className="mt-2 font-body text-ink-muted">3 langkah mudah langsung dari HP Anda.</p>
       </header>

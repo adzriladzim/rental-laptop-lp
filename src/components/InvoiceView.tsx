@@ -148,7 +148,7 @@ export function InvoiceView({ no }: { no?: string }) {
     booking.totalPenalty && booking.totalPenalty > 0 && booking.totalPenalty !== lateFee
       ? booking.totalPenalty - lateFee
       : 0
-  const businessName = settings?.name ?? 'LaptopRental'
+  const businessName = settings?.name ?? 'Sewaintop'
   const customerName = booking.customerName?.trim() || 'Pelanggan'
 
   return (
@@ -156,7 +156,7 @@ export function InvoiceView({ no }: { no?: string }) {
       <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/status"
-          className="font-body text-sm font-semibold text-accent underline-offset-2 hover:underline"
+          className="font-body text-sm font-semibold text-ink underline-offset-2 hover:underline"
         >
           ← Cek Status
         </Link>

@@ -1,15 +1,13 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { getBookedDates } from '@/lib/availability'
-import { getAvailability } from '@/lib/api'
+import { getAvailability, getBookedDates } from '@/lib/api'
 
 interface AvailabilityCalendarProps {
   laptopId: string
-  laptopSlug?: string
   laptopCategory?: string
+  laptopSlug?: string
   onSelectDates?: (dates: string[]) => void
-  live?: boolean
 }
 
 const WEEKDAYS = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
@@ -31,7 +29,6 @@ function todayISO(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-/** Expand inclusive ISO date range to a list of ISO dates. */
 function expandRange(start: string, end: string): string[] {
   const out: string[] = []
   const cur = new Date(`${start}T00:00:00`)
@@ -43,7 +40,6 @@ function expandRange(start: string, end: string): string[] {
   return out
 }
 
-/** Human summary: contiguous runs become "26–30 Agu", singles "26 Agu", joined with ", ". */
 export function formatDatesSummary(dates: string[]): string {
   if (dates.length === 0) return ''
   const sorted = [...dates].sort()
@@ -72,26 +68,21 @@ export function formatDatesSummary(dates: string[]): string {
 export function AvailabilityCalendar({
   laptopId,
   laptopCategory,
+  laptopSlug,
   onSelectDates,
-  live,
 }: AvailabilityCalendarProps) {
   const today = todayISO()
   const initial = new Date()
   const [viewYear, setViewYear] = useState(initial.getFullYear())
-  const [viewMonth, setViewMonth] = useState(initial.getMonth() + 1) // 1-indexed
+  const [viewMonth, setViewMonth] = useState(initial.getMonth() + 1)
 
-  // Unified selection flow (no modes):
-  //  - click 1: anchor date (single pick pending)
-  //  - click 2: range fills anchor→date (same date = confirmed single day)
-  //  - click a selected date: remove that day (for custom non-contiguous picks)
-  //  - click any other available date: start a fresh selection
   const [anchor, setAnchor] = useState<string | null>(null)
-  const [pending, setPending] = useState(false) // anchor set, awaiting 2nd click
+  const [pending, setPending] = useState(false)
   const [selected, setSelected] = useState<string[]>([])
 
-  // live = range-level availability from API (whole-month granularity)
-  const [liveBooked, setLiveBooked] = useState<boolean | null>(null)
   const [note, setNote] = useState<string | null>(null)
+  const [bookedDates, setBookedDates] = useState<Set<string>>(new Set())
+  const [bookedWarning, setBookedWarning] = useState<string | null>(null)
 
   const { first, last, daysInMonth } = useMemo(() => {
     const dim = new Date(viewYear, viewMonth, 0).getDate()
@@ -103,58 +94,57 @@ export function AvailabilityCalendar({
   }, [viewYear, viewMonth])
 
   useEffect(() => {
-    if (!live) return
     let cancelled = false
     getAvailability(first, last, laptopCategory)
       .then((available) => {
         if (cancelled) return
         const isAvailable = available.some((l) => l.id === laptopId)
-        setLiveBooked(!isAvailable)
         setNote(
           isAvailable
-            ? `Tersedia periode ${MONTH_NAMES[viewMonth - 1]} ${viewYear} (data live)`
-            : `Tidak tersedia periode ${MONTH_NAMES[viewMonth - 1]} ${viewYear} (data live)`,
+            ? `Tersedia periode ${MONTH_NAMES[viewMonth - 1]} ${viewYear}`
+            : `Tidak tersedia periode ${MONTH_NAMES[viewMonth - 1]} ${viewYear}`,
         )
       })
       .catch(() => {
         if (cancelled) return
-        // fall back to deterministic mock
-        setLiveBooked(null)
-        setNote('Data estimasi (offline)')
+        setNote('Gagal memuat data ketersediaan')
       })
-    return () => {
-      cancelled = true
-    }
-  }, [live, laptopId, laptopCategory, first, last, viewMonth, viewYear])
+    return () => { cancelled = true }
+  }, [laptopId, laptopCategory, first, last, viewMonth, viewYear, daysInMonth])
 
-  const bookedSet = useMemo(() => {
-    if (live && liveBooked !== null) {
-      const s = new Set<string>()
-      if (liveBooked) {
-        for (let d = 1; d <= daysInMonth; d++) s.add(toISO(viewYear, viewMonth, d))
-      }
-      return s
-    }
-    return new Set(getBookedDates(laptopId, viewYear, viewMonth))
-  }, [live, liveBooked, laptopId, viewYear, viewMonth, daysInMonth])
+  useEffect(() => {
+    if (!laptopSlug) return
+    let cancelled = false
+    setBookedWarning(null)
+    getBookedDates(laptopSlug, first, last)
+      .then(({ dates }) => {
+        if (cancelled) return
+        setBookedDates(new Set(dates))
+      })
+      .catch((err) => {
+        if (cancelled) return
+        console.error('Gagal memuat tanggal terbooking:', err)
+        setBookedDates(new Set())
+        setBookedWarning('Gagal memuat data ketersediaan. Tanggal terbooking mungkin tidak tampil.')
+      })
+    return () => { cancelled = true }
+  }, [laptopSlug, first, last])
 
-  const firstWeekday = (new Date(viewYear, viewMonth - 1, 1).getDay() + 6) % 7 // Mon = 0
+  const firstWeekday = (new Date(viewYear, viewMonth - 1, 1).getDay() + 6) % 7
 
   const cells: (number | null)[] = []
   for (let i = 0; i < firstWeekday; i++) cells.push(null)
   for (let d = 1; d <= daysInMonth; d++) cells.push(d)
 
   const isPast = (day: number) => toISO(viewYear, viewMonth, day) < today
-
   const selectedSet = useMemo(() => new Set(selected), [selected])
-
   const emit = (dates: string[]) => onSelectDates?.(dates)
 
   const handlePick = (day: number) => {
     const iso = toISO(viewYear, viewMonth, day)
-    if (bookedSet.has(iso) || isPast(day)) return
+    if (isPast(day)) return
+    if (bookedDates.has(iso)) return
 
-    // Awaiting 2nd click → build range (or confirm single day)
     if (pending && anchor) {
       if (iso === anchor) {
         setPending(false)
@@ -170,7 +160,6 @@ export function AvailabilityCalendar({
       return
     }
 
-    // Selection complete → toggle off picked days, else start fresh
     if (selectedSet.has(iso)) {
       const next = selected.filter((d) => d !== iso)
       setSelected(next)
@@ -210,10 +199,8 @@ export function AvailabilityCalendar({
     }
   }
 
-  // Preview band while awaiting 2nd click (hover-independent: anchor→today's hovered cell is
-  // skipped for simplicity; band only shows after range is chosen)
   const hint = pending
-    ? 'Sekarang klik tanggal akhir — atau klik tanggal yang sama lagi untuk sewa 1 hari.'
+    ? 'Klik tanggal akhir — atau klik tanggal yang sama lagi untuk sewa 1 hari.'
     : selected.length > 0
       ? 'Klik tanggal terpilih untuk membuang hari itu. Klik tanggal lain untuk mulai pilih baru.'
       : 'Klik tanggal mulai, lalu klik tanggal akhir — rentang langsung terisi.'
@@ -221,74 +208,87 @@ export function AvailabilityCalendar({
   return (
     <div className="w-full">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h3 className="font-display text-lg text-ink">Pilih Tanggal Sewa</h3>
+        <h3 className="font-display text-base font-semibold text-ink">Pilih Tanggal Sewa</h3>
         {selected.length > 0 && (
           <button
             type="button"
             onClick={clearAll}
-            className="text-xs font-semibold text-accent hover:text-accent/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded"
+            className="rounded text-xs font-semibold text-ink transition-colors hover:text-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             Hapus pilihan
           </button>
         )}
       </div>
 
-      <div className="flex items-center justify-between mb-4">
+      {/* Month nav */}
+      <div className="mb-4 flex items-center justify-between">
         <button
           type="button"
           onClick={goPrev}
           aria-label="Bulan sebelumnya"
-          className="h-9 w-9 grid place-items-center rounded-md border border-border text-ink hover:bg-paper-subtle transition-colors"
+          className="grid h-9 w-9 place-items-center rounded-lg border border-border text-ink transition-colors hover:bg-paper-subtle"
         >
-          {'<'}
+          ‹
         </button>
-        <p className="font-display text-lg text-ink">
+        <p className="font-display text-base font-semibold text-ink">
           {MONTH_NAMES[viewMonth - 1]} {viewYear}
         </p>
         <button
           type="button"
           onClick={goNext}
           aria-label="Bulan berikutnya"
-          className="h-9 w-9 grid place-items-center rounded-md border border-border text-ink hover:bg-paper-subtle transition-colors"
+          className="grid h-9 w-9 place-items-center rounded-lg border border-border text-ink transition-colors hover:bg-paper-subtle"
         >
-          {'>'}
+          ›
         </button>
       </div>
 
       {note && (
-        <p className="mb-2 font-body text-xs text-ink-muted">{note}</p>
+        <p className="mb-2 text-xs text-ink-muted">{note}</p>
       )}
-      <p className="mb-2 font-body text-xs text-ink-muted" aria-live="polite">{hint}</p>
+      {bookedWarning && (
+        <p className="mb-2 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-700" role="alert">
+          {bookedWarning}
+        </p>
+      )}
+      <p className="mb-3 text-xs text-ink-muted" aria-live="polite">{hint}</p>
 
+      {/* Calendar grid */}
       <div className="grid grid-cols-7 gap-1 text-center">
         {WEEKDAYS.map((w) => (
-          <div key={w} className="text-xs font-body uppercase tracking-wide text-ink-muted py-1">
+          <div key={w} className="py-1 text-xs font-semibold uppercase tracking-wide text-ink-muted">
             {w}
           </div>
         ))}
         {cells.map((day, idx) => {
           if (day === null) return <div key={`e${idx}`} aria-hidden />
           const iso = toISO(viewYear, viewMonth, day)
-          const booked = bookedSet.has(iso)
           const past = isPast(day)
+          const isBooked = bookedDates.has(iso)
           const isToday = iso === today
           const isSelected = selectedSet.has(iso)
           const isAnchor = pending && iso === anchor
-          const disabled = booked || past
+
           let cls =
-            'aspect-square grid place-items-center rounded-md text-sm font-body border transition-colors'
-          if (booked) cls += ' bg-paper-subtle text-ink-muted border-border line-through'
-          else if (past)
-            cls += ' bg-paper-subtle/50 text-ink-muted/60 border-transparent cursor-not-allowed'
-          else if (isSelected) cls += ' bg-accent text-accent-fg border-accent font-semibold cursor-pointer'
-          else if (isAnchor) cls += ' bg-accent/25 text-ink border-accent cursor-pointer animate-pulse'
-          else cls += ' bg-accent/10 text-ink border-accent/40 hover:bg-accent/20 cursor-pointer'
-          if (isToday && !isSelected) cls += ' ring-2 ring-accent ring-offset-1 ring-offset-paper'
+            'grid aspect-square place-items-center rounded-lg text-sm border font-medium transition-all'
+          if (past) {
+            cls += ' bg-paper-subtle/50 text-ink-muted/50 border-transparent cursor-not-allowed'
+          } else if (isBooked) {
+            cls += ' bg-gray-500 text-white line-through cursor-not-allowed border-gray-600'
+          } else if (isSelected) {
+            cls += ' bg-accent text-accent-fg border-accent shadow-sm cursor-pointer'
+          } else if (isAnchor) {
+            cls += ' bg-accent/20 text-ink border-accent cursor-pointer animate-pulse'
+          } else {
+            cls += ' bg-accent/5 text-ink border-accent/20 hover:border-accent/50 hover:bg-accent/10 cursor-pointer'
+          }
+          if (isToday && !isSelected) cls += ' ring-2 ring-accent/40 ring-offset-1 ring-offset-paper'
+
           return (
             <button
               key={iso}
               type="button"
-              disabled={disabled}
+              disabled={past || isBooked}
               onClick={() => handlePick(day)}
               aria-pressed={isSelected}
               aria-label={iso}
@@ -300,26 +300,25 @@ export function AvailabilityCalendar({
         })}
       </div>
 
-      {/* Selection summary */}
       {selected.length > 0 && (
-        <div className="mt-3 rounded-lg bg-accent/10 border border-accent/30 px-3 py-2 text-sm">
+        <div className="mt-3 rounded-xl border border-accent/30 bg-accent/10 px-3 py-2 text-sm">
           <span className="font-semibold text-ink">{formatDatesSummary(selected)}</span>
           <span className="text-ink-muted"> · {selected.length} hari dipilih</span>
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-4 mt-4 text-xs font-body text-ink-muted">
+      <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-ink-muted">
         <span className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-sm bg-accent/20 border border-accent/40" />
+          <span className="grid h-5 w-5 place-items-center rounded border border-orange-400 bg-orange-100 text-xs font-semibold text-orange-800">✓</span>
           Tersedia
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-sm bg-paper-subtle border border-border line-through" />
-          Terisi (sudah dibooking)
+          <span className="grid h-5 w-5 place-items-center rounded border border-gray-300 bg-gray-200 text-xs font-semibold text-gray-500">—</span>
+          Tanggal lewat
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-sm bg-paper-subtle/50 border border-transparent" />
-          Tanggal lewat
+          <span className="grid h-5 w-5 place-items-center rounded border border-gray-600 bg-gray-500 text-xs font-semibold text-white">✕</span>
+          Sudah dibooking
         </span>
       </div>
     </div>

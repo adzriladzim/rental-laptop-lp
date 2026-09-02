@@ -64,11 +64,11 @@ export default function SyaratKetentuanPage() {
     <main className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
       <header className="mb-10 grid gap-4 md:grid-cols-12">
         <div className="md:col-span-7">
-          <p className="font-body text-sm uppercase tracking-widest text-accent">
+          <p className="font-body text-sm uppercase tracking-widest text-ink">
             Legal
           </p>
           <h1 className="mt-2 font-display text-4xl leading-tight text-ink sm:text-5xl">
-            Syarat &amp; <em className="text-accent italic">Ketentuan</em>
+            Syarat &amp; <em className="text-ink italic">Ketentuan</em>
           </h1>
         </div>
         <p className="self-end font-body text-base text-ink-muted md:col-span-5">

@@ -1,8 +1,8 @@
 // Public API client for the live laptop-rental backend (Cloudflare Worker).
 // All responses are wrapped as { data: ... } — publicApi unwraps that.
 
-const API_URL = 'https://laptop-rental-api.adzril-adzim1913937.workers.dev'
-const API_KEY = 'lpr_public_dev_key'
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://laptop-rental-api.adzril-adzim1913937.workers.dev'
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY ?? 'lpr_public_dev_key'
 
 export type LaptopCategory = 'Developer' | 'Designer' | 'Student' | 'Business' | 'Gaming'
 
@@ -32,6 +32,7 @@ export type Laptop = {
   partnerId: string | null
   quantity?: number
   photoUrl?: string | null
+  useCases?: string[]
 }
 
 export type LaptopFilters = {
@@ -44,11 +45,22 @@ export interface BookingPayload {
   laptopSlug: string
   startDate: string
   endDate: string
+  // Step 3 — Essential
   customerName: string
   customerPhone: string
-  customerEmail: string
-  customerId?: string
-  notes?: string
+  homeAddress: string
+  deliveryAddress: string
+  officeAddress: string
+  guaranteeDoc1: string
+  guaranteeDoc2: string
+  rentalReason: string
+  // Step 4 — Additional
+  familyContactRelation: string
+  familyContactPhone: string
+  instagram: string
+  linkedin: string
+  isDomisiliMatch: boolean
+  hasOwnLaptop: boolean
 }
 
 export interface LeadPayload {
@@ -172,6 +184,18 @@ export function getAvailability(
   })
 }
 
+export function getBookedDates(
+  slug: string,
+  start: string,
+  end: string,
+): Promise<{ dates: string[] }> {
+  const qs = new URLSearchParams({ start, end })
+  return publicApi<{ dates: string[] }>(
+    `/public/laptops/${encodeURIComponent(slug)}/booked-dates?${qs.toString()}`,
+    { next: { revalidate: 60 } },
+  )
+}
+
 export interface BookingCreateResult {
   bookingNumber: string
   status: string
@@ -229,6 +253,51 @@ export function submitLead(payload: LeadPayload): Promise<{ id: string }> {
 
 export function getSettings(): Promise<BusinessSettings> {
   return publicApi<BusinessSettings>('/public/settings', {
+    next: { revalidate: 300 },
+  })
+}
+
+export type PublicReview = {
+  id: string
+  rating: number
+  comment: string
+  createdAt: string
+  customerName: string
+  laptopName: string
+}
+
+export function getReviews(): Promise<PublicReview[]> {
+  return publicApi<PublicReview[]>('/public/reviews', {
+    next: { revalidate: 300 },
+  })
+}
+
+export type Package = {
+  id: string
+  name: string
+  description: string | null
+  laptopIds: string[]
+  price: number
+  durationDays: number
+  isActive: boolean
+}
+
+export type PricingTier = {
+  id: string
+  name: string
+  minDays: number
+  maxDays: number | null
+  discountPercent: number
+}
+
+export function getPackages(): Promise<Package[]> {
+  return publicApi<Package[]>('/public/packages', {
+    next: { revalidate: 300 },
+  })
+}
+
+export function getPricingTiers(): Promise<PricingTier[]> {
+  return publicApi<PricingTier[]>('/public/pricing-tiers', {
     next: { revalidate: 300 },
   })
 }

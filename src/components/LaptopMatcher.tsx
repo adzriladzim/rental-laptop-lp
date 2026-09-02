@@ -102,7 +102,7 @@ export function LaptopMatcher({ laptops }: { laptops: Laptop[] }) {
           <div>
             <p className="mb-3 text-sm font-semibold text-ink">
               2. Budget sewa bulanan:{' '}
-              <span className="font-display text-accent">{formatIDR(budget)}</span>
+              <span className="font-display text-ink">{formatIDR(budget)}</span>
             </p>
             <input
               type="range"
@@ -176,7 +176,7 @@ export function LaptopMatcher({ laptops }: { laptops: Laptop[] }) {
                 </div>
               </Link>
               <div className="p-5">
-                <p className="mb-1 text-xs uppercase tracking-wider text-accent">{laptop.category}</p>
+                <p className="mb-1 text-xs uppercase tracking-wider text-ink">{laptop.category}</p>
                 <Link href={`/laptop/${laptop.slug}`}>
                   <h3 className="font-display text-lg font-semibold text-ink hover:text-accent transition-colors">
                     {laptop.name}
@@ -189,14 +189,24 @@ export function LaptopMatcher({ laptops }: { laptops: Laptop[] }) {
                   {formatIDR(rateFor(laptop, duration))}
                   <span className="text-sm font-normal text-ink-muted">/{duration === 'harian' ? 'hari' : duration === 'mingguan' ? 'minggu' : 'bulan'}</span>
                 </p>
-                <Button
-                  variant="wa"
-                  size="sm"
-                  className="w-full"
-                  onClick={handlePesan(laptop)}
-                >
-                  Pesan via WhatsApp
-                </Button>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    href={`/pesan?unit=${laptop.slug}`}
+                    className="w-full"
+                  >
+                    Pesan Sekarang
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={handlePesan(laptop)}
+                  >
+                    Tanya via WhatsApp
+                  </Button>
+                </div>
               </div>
             </div>
           ))}

@@ -29,9 +29,35 @@ export async function generateMetadata({
     laptop = FALLBACK_LAPTOPS.find((l) => l.slug === slug)
   }
   if (!laptop) return { title: 'Laptop tidak ditemukan' }
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rental-laptop-lp.vercel.app'
   return {
     title: `${laptop.name} — Sewa Jakarta`,
     description: laptop.description,
+    alternates: {
+      canonical: `/laptop/${laptop.slug}`,
+    },
+    openGraph: {
+      type: 'website',
+      locale: 'id_ID',
+      url: `${baseUrl}/laptop/${laptop.slug}`,
+      title: `${laptop.name} — Sewa di Sewaintop`,
+      description: laptop.description,
+      images: [
+        {
+          url: `/laptop/${laptop.slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `${laptop.name} — Sewa di Sewaintop`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${laptop.name} — Sewa di Sewaintop`,
+      description: laptop.description,
+      images: [`/laptop/${laptop.slug}/opengraph-image`],
+    },
   }
 }
 
@@ -76,11 +102,25 @@ export default async function LaptopDetailPage({
     },
   }
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Beranda', item: baseUrl },
+      { '@type': 'ListItem', position: 2, name: 'Katalog', item: `${baseUrl}/laptop` },
+      { '@type': 'ListItem', position: 3, name: laptop.name, item: `${baseUrl}/laptop/${laptop.slug}` },
+    ],
+  }
+
   return (
     <main className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Link
         href="/laptop"

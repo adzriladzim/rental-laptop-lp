@@ -163,6 +163,10 @@ export function BookingStatusChecker({ initialNo }: { initialNo?: string }) {
     ? `Halo, saya ingin tanya status booking ${detail.bookingNumber}.`
     : ''
 
+  const waExtendMsg = detail
+    ? `Halo, saya ingin memperpanjang masa sewa untuk booking ${detail.bookingNumber}. Mohon informasi ketersediaan dan biaya perpanjangannya. Terima kasih.`
+    : ''
+
   return (
     <div className="rounded-2xl border border-border bg-paper p-5 sm:p-8">
       {/* Tabs */}
@@ -183,7 +187,7 @@ export function BookingStatusChecker({ initialNo }: { initialNo?: string }) {
               setDetail(null)
             }}
             className={`min-h-[44px] rounded-lg font-display font-semibold transition-colors ${
-              mode === m ? 'bg-paper text-accent shadow-card' : 'text-ink-muted'
+              mode === m ? 'bg-paper text-ink shadow-card' : 'text-ink-muted'
             }`}
           >
             {label}
@@ -283,7 +287,7 @@ export function BookingStatusChecker({ initialNo }: { initialNo?: string }) {
           <button
             type="button"
             onClick={backToList}
-            className="mb-4 font-body text-sm font-semibold text-accent underline-offset-2 hover:underline"
+            className="mb-4 font-body text-sm font-semibold text-ink underline-offset-2 hover:underline"
           >
             ← {mode === 'phone' ? 'Daftar booking' : 'Cek booking lain'}
           </button>
@@ -388,11 +392,19 @@ export function BookingStatusChecker({ initialNo }: { initialNo?: string }) {
           <div className="mt-6 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
             <span className="font-body text-sm text-ink-muted">Butuh bantuan?</span>
             <div className="flex flex-wrap gap-2">
+              <a
+                href={buildWaLink(BUSINESS_WA, waExtendMsg)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-accent bg-paper px-6 font-display font-semibold text-accent transition-colors hover:bg-accent/10"
+              >
+                Perpanjang Sewa
+              </a>
               <Link
                 href={`/invoice?no=${detail.bookingNumber}`}
                 className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-border bg-paper px-6 font-display font-semibold text-ink transition-colors hover:border-accent"
               >
-                Lihat Invoice
+                Download Invoice
               </Link>
               <a
                 href={buildWaLink(BUSINESS_WA, waStatusMsg)}
@@ -410,7 +422,7 @@ export function BookingStatusChecker({ initialNo }: { initialNo?: string }) {
       {!detail && (
         <p className="mt-6 font-body text-sm text-ink-muted">
           Tidak menemukan nomor booking?{' '}
-          <Link href="/kontak" className="font-semibold text-accent transition-colors hover:text-accent/80">
+          <Link href="/kontak" className="font-semibold text-ink transition-colors hover:text-accent">
             Hubungi kami
           </Link>{' '}
           untuk bantuan.

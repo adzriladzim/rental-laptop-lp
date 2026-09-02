@@ -56,3 +56,54 @@ export const GUIDES: Guide[] = [
     readTime: '6 min',
   },
 ]
+
+export const GUIDES_EN: Guide[] = [
+  {
+    slug: 'cara-memilih-laptop',
+    title: 'How to Choose the Right Laptop for Your Work',
+    excerpt:
+      'Processor, RAM, storage, and display — a short guide to matching specs to your type of work so you don\u2019t pick wrong.',
+    category: 'Guide',
+    readTime: '6 min',
+  },
+  {
+    slug: 'sewa-harian-vs-mingguan-vs-bulanan',
+    title: 'Daily vs Weekly vs Monthly Rental Differences',
+    excerpt:
+      'Calculate when weekly or monthly packages are actually cheaper than stacking daily rates. Tips to save your rental budget.',
+    category: 'Pricing',
+    readTime: '5 min',
+  },
+  {
+    slug: 'tips-merawat-laptop-rental',
+    title: 'Tips to Care for a Rental Laptop',
+    excerpt:
+      'How to protect the battery, keep it clean, and avoid damage during the rental period so your deposit returns intact.',
+    category: 'Maintenance',
+    readTime: '4 min',
+  },
+  {
+    slug: 'laptop-terbaik-developer-2026',
+    title: 'Best Laptops for Developers in 2026',
+    excerpt:
+      'Recommendations with large RAM and fast processors for coding, Docker, and heavy multitasking.',
+    category: 'Developer',
+    readTime: '7 min',
+  },
+  {
+    slug: 'sewa-laptop-event',
+    title: 'Renting Laptops for Events: What to Know',
+    excerpt:
+      'A checklist to prepare dozens of units for seminars, training, and expo booths — from logistics to spares.',
+    category: 'Event',
+    readTime: '5 min',
+  },
+  {
+    slug: 'corporate-laptop-rental',
+    title: 'Corporate Laptop Rental: A Solution for Teams',
+    excerpt:
+      'How to manage bulk laptop rental for hybrid teams and long-term projects with volume pricing.',
+    category: 'Corporate',
+    readTime: '6 min',
+  },
+]
