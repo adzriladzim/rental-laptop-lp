@@ -179,7 +179,7 @@ export function KorporatView() {
                 </span>
                 <div>
                   <p className="font-display text-sm font-semibold text-ink">Email</p>
-                  <p className="font-body text-xs text-ink-muted">info@sewaintop.com</p>
+                  <p className="font-body text-xs text-ink-muted">halo@sewalaptop.id</p>
                 </div>
               </div>
             </div>

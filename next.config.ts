@@ -11,6 +11,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'rental-laptop-lp.vercel.app' }],
+        destination: 'https://sewaintop.ai.id/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

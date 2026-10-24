@@ -42,7 +42,7 @@ export function generateBookingMessage(data: BookingMessageData): string {
     lines.push('', `📝 CATATAN`, data.notes.trim())
   }
 
-  lines.push('', '— dikirim dari sewaintop.com')
+  lines.push('', '— dikirim dari sewaintop.ai.id')
 
   return lines.join('\n')
 }
