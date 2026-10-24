@@ -15,7 +15,6 @@ export function SiteHeader() {
 
   const NAV_LINKS = [
     { href: '/laptop', label: t.nav.catalog },
-    { href: '/rekomendasi', label: t.nav.recommendation },
     { href: '/harga', label: t.nav.price },
     { href: '/testimoni', label: t.nav.testimonial },
   ]

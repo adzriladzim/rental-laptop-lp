@@ -26,7 +26,10 @@ function toISO(y: number, m: number, d: number): string {
 }
 
 function todayISO(): string {
-  return new Date().toISOString().slice(0, 10)
+  // Local (WIB) date — matches test helper futureISO() and BookingFlow.todayISO().
+  const d = new Date()
+  const off = d.getTimezoneOffset() * 60000
+  return new Date(d.getTime() - off).toISOString().slice(0, 10)
 }
 
 function expandRange(start: string, end: string): string[] {
@@ -206,7 +209,7 @@ export function AvailabilityCalendar({
       : 'Klik tanggal mulai, lalu klik tanggal akhir — rentang langsung terisi.'
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-full overflow-x-hidden">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h3 className="font-display text-base font-semibold text-ink">Pilih Tanggal Sewa</h3>
         {selected.length > 0 && (

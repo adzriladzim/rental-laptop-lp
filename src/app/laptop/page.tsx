@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import { getLaptops } from '@/lib/api'
-import { FALLBACK_LAPTOPS } from '@/lib/laptops'
+import { FALLBACK_LAPTOPS, LAPTOP_CATEGORIES } from '@/lib/laptops'
 
 const LaptopCatalog = dynamic(
   () => import('@/components/LaptopCatalog').then((m) => m.LaptopCatalog),
@@ -24,22 +24,29 @@ export default async function LaptopCatalogPage() {
     laptops = FALLBACK_LAPTOPS
   }
 
+  const categoryCount = LAPTOP_CATEGORIES.length
+
   return (
-    <main className="mx-auto max-w-7xl px-5 py-12 sm:py-16">
-      <header className="mb-10 grid gap-4 md:grid-cols-12">
-        <div className="md:col-span-7">
-          <p className="font-body text-sm uppercase tracking-widest text-ink">Katalog</p>
-          <h1 className="mt-2 font-display text-4xl sm:text-5xl text-ink leading-tight">
-            Sewa Laptop untuk <em className="text-ink italic">Setiap</em> Kebutuhan
+    <main className="mx-auto max-w-7xl px-5 py-10 sm:py-14">
+      {/* Hero — asymmetric editorial, left-biased */}
+      <header className="mb-12 grid gap-6 md:grid-cols-12 md:items-end">
+        <div className="md:col-span-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">Katalog</p>
+          <h1 className="mt-3 font-display text-4xl font-black tracking-tight text-ink sm:text-5xl lg:text-[3.5rem] leading-[1.08]">
+            Katalog Laptop<br className="hidden sm:block" /> Sewa <em className="text-ink italic">Jakarta</em>
           </h1>
-          <p className="mt-3 font-body text-base text-ink-muted">
-            Ujian BUMN/CPNS, kerja remote, desain, coding — pilih berdasarkan kebutuhan Anda.
+          <p className="mt-4 max-w-lg text-base leading-relaxed text-ink-muted">
+            Ujian BUMN/CPNS, kerja remote, desain, coding — pilih berdasarkan kebutuhan Anda. Harga transparan, booking 3 langkah.
           </p>
+          {/* Stats — inline below description */}
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-muted">
+            <span className="font-display font-semibold text-ink">{laptops.length} unit tersedia</span>
+            <span className="text-ink-faint">·</span>
+            <span>{categoryCount} kategori</span>
+          </div>
         </div>
-        <p className="font-body text-base text-ink-muted self-end md:col-span-5">
-          {laptops.length} unit tersedia. Filter berdasarkan kebutuhan atau kategori, lalu cek detail &amp; ketersediaan tiap unit.
-        </p>
       </header>
+
       <LaptopCatalog laptops={laptops} />
     </main>
   )

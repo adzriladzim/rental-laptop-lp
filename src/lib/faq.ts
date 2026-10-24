@@ -31,9 +31,9 @@ export const FAQS: FaqItem[] = [
   },
   {
     id: 'deposit',
-    question: 'Apakah perlu deposit?',
+    question: 'Apakah perlu DP Booking Unit?',
     answer:
-      'Ya, untuk sewa pertama kami meminta deposit keamanan (besaran menyesuaikan unit, dibicarakan saat booking). Deposit dikembalikan penuh setelah unit kembali dalam kondisi baik.',
+      'Ya, untuk sewa pertama kami meminta DP Booking Unit (besaran menyesuaikan unit, dibicarakan saat booking). DP dikembalikan penuh setelah unit kembali dalam kondisi baik.',
   },
   {
     id: 'late',
@@ -45,7 +45,7 @@ export const FAQS: FaqItem[] = [
     id: 'cancellation',
     question: 'Bagaimana kebijakan pembatalan?',
     answer:
-      'Pembatalan sebelum unit dikirim: refund penuh (atau deposit dikembalikan). Setelah unit terkirim berlaku biaya administrasi. Hubungi kami secepatnya untuk penyesuaian jadwal.',
+      'Pembatalan sebelum unit dikirim: refund penuh (atau DP dikembalikan). Setelah unit terkirim berlaku biaya administrasi. Hubungi kami secepatnya untuk penyesuaian jadwal.',
   },
   {
     id: 'verification',
@@ -106,9 +106,9 @@ export const FAQS_EN: FaqItem[] = [
   },
   {
     id: 'deposit',
-    question: 'Is a deposit required?',
+    question: 'Is a DP Booking Unit required?',
     answer:
-      'Yes, for first-time rentals we ask for a security deposit (amount varies by unit, discussed at booking). The deposit is fully refunded once the unit is returned in good condition.',
+      'Yes, for first-time rentals we ask for a DP Booking Unit (amount varies by unit, discussed at booking). The DP is fully refunded once the unit is returned in good condition.',
   },
   {
     id: 'late',
@@ -120,7 +120,7 @@ export const FAQS_EN: FaqItem[] = [
     id: 'cancellation',
     question: 'What is the cancellation policy?',
     answer:
-      'Cancellation before delivery: full refund (or deposit returned). After delivery, an administrative fee applies. Contact us as soon as possible to adjust the schedule.',
+      'Cancellation before delivery: full refund (or DP returned). After delivery, an administrative fee applies. Contact us as soon as possible to adjust the schedule.',
   },
   {
     id: 'verification',

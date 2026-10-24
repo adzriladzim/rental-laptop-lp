@@ -3,7 +3,7 @@ import { getLaptops } from '@/lib/api'
 import { FALLBACK_LAPTOPS } from '@/lib/laptops'
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rental-laptop-lp.vercel.app'
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sewaintop.ai.id'
 
 const STATIC_ROUTES = [
   '',
@@ -13,7 +13,6 @@ const STATIC_ROUTES = [
   '/testimoni',
   '/faq',
   '/panduan',
-  '/rekomendasi',
   '/status',
   '/korporat',
   '/tentang',

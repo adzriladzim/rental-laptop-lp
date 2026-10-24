@@ -27,7 +27,7 @@ export default async function HargaPage() {
   )
 
   const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rental-laptop-lp.vercel.app'
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sewaintop.ai.id'
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',

@@ -12,7 +12,6 @@ export function SiteFooter() {
   const SERVICE_LINKS = [
     { href: '/laptop', label: t.footer.catalog },
     { href: '/harga', label: t.footer.pricePackage },
-    { href: '/rekomendasi', label: t.footer.recommendation },
     { href: '/status', label: t.footer.checkStatus },
   ]
 

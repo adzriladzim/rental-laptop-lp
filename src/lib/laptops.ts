@@ -7,7 +7,7 @@
 import type { Laptop, LaptopCategory } from '@/lib/api'
 export type { Laptop, LaptopCategory, LaptopSpecs } from '@/lib/api'
 
-/* Category types used by /kategori pages and /rekomendasi quiz */
+/* Category types used by /kategori pages */
 export const LAPTOP_CATEGORIES: LaptopCategory[] = [
   'Developer',
   'Designer',
@@ -247,79 +247,4 @@ export function formatIDR(value: number): string {
   }).format(value)
 }
 
-// --- Retained for /rekomendasi quiz compatibility ---
-export type JobType = 'developer' | 'designer' | 'student' | 'business' | 'gaming'
-export type BudgetTier = '<2jt' | '2-4jt' | '4-6jt' | '>6jt'
-export type Duration = 'harian' | 'mingguan' | 'bulanan'
 
-export interface QuizAnswers {
-  jobType: JobType
-  software: string
-  budget: BudgetTier
-  duration: Duration
-  location: string
-}
-
-export interface Recommendation {
-  laptop: Laptop
-  reason: string
-}
-
-const CATEGORY_BY_JOB: Record<JobType, LaptopCategory> = {
-  developer: 'Developer',
-  designer: 'Designer',
-  student: 'Student',
-  gaming: 'Gaming',
-  business: 'Business',
-}
-
-const JOB_LABEL: Record<JobType, string> = {
-  developer: 'development',
-  designer: 'desain',
-  student: 'studi',
-  gaming: 'gaming',
-  business: 'bisnis',
-}
-
-const BUDGET_MAX: Record<BudgetTier, number> = {
-  '<2jt': 2_000_000,
-  '2-4jt': 4_000_000,
-  '4-6jt': 6_000_000,
-  '>6jt': Number.POSITIVE_INFINITY,
-}
-
-export function recommendLaptop(laptops: Laptop[], answers: QuizAnswers): Recommendation {
-  const list = laptops ?? []
-  const category = CATEGORY_BY_JOB[answers.jobType] ?? 'Business'
-  const budgetMax = BUDGET_MAX[answers.budget] ?? Number.POSITIVE_INFINITY
-
-  const candidates = list.filter(
-    (laptop) => laptop.category === category && laptop.monthlyRate <= budgetMax,
-  )
-
-  const pickBest = (arr: Laptop[]) =>
-    arr.reduce((best, laptop) => (laptop.monthlyRate > best.monthlyRate ? laptop : best))
-
-  if (candidates.length > 0) {
-    const laptop = pickBest(candidates)
-    return {
-      laptop,
-      reason: `Dengan budget ${formatIDR(budgetMax)} per bulan, ${laptop.name} menawarkan ${laptop.specs.processor} + ${laptop.specs.ram} — kombinasi paling pas untuk kebutuhan ${JOB_LABEL[answers.jobType]} Anda.`,
-    }
-  }
-
-  const inBudget = list.filter((laptop) => laptop.monthlyRate <= budgetMax)
-  if (inBudget.length > 0) {
-    const laptop = pickBest(inBudget)
-    return {
-      laptop,
-      reason: `Di kategori ${category} belum ada unit dalam budget Anda, tapi ${laptop.name} (${formatIDR(laptop.monthlyRate)}/bulan) tetap yang terbaik di rentang ${formatIDR(budgetMax)} berkat ${laptop.specs.processor} + ${laptop.specs.ram}.`,
-    }
-  }
-
-  const laptop = pickBest([...list])
-  return {
-    laptop,
-    reason: `Budget Anda di bawah semua opsi, jadi kami sarankan ${laptop.name} — unit paling hemat dengan ${laptop.specs.ram} dan ${laptop.specs.storage} yang tetap mumpuni.`,
-  }
-}

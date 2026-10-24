@@ -27,7 +27,7 @@ export const GUIDES: Guide[] = [
     slug: 'tips-merawat-laptop-rental',
     title: 'Tips Merawat Laptop Rental agar Kondisi Tetap Baik',
     excerpt:
-      'Cara menjaga baterai, kebersihan, dan menghindari kerusakan selama masa sewa supaya deposit kembali utuh.',
+      'Cara menjaga baterai, kebersihan, dan menghindari kerusakan selama masa sewa supaya DP kembali utuh.',
     category: 'Perawatan',
     readTime: '4 min',
   },
@@ -78,7 +78,7 @@ export const GUIDES_EN: Guide[] = [
     slug: 'tips-merawat-laptop-rental',
     title: 'Tips to Care for a Rental Laptop',
     excerpt:
-      'How to protect the battery, keep it clean, and avoid damage during the rental period so your deposit returns intact.',
+      'How to protect the battery, keep it clean, and avoid damage during the rental period so your DP returns intact.',
     category: 'Maintenance',
     readTime: '4 min',
   },

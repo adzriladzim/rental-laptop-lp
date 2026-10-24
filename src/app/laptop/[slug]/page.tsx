@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getLaptops, getLaptopBySlug } from '@/lib/api'
 import { FALLBACK_LAPTOPS } from '@/lib/laptops'
@@ -30,7 +29,7 @@ export async function generateMetadata({
   }
   if (!laptop) return { title: 'Laptop tidak ditemukan' }
   const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rental-laptop-lp.vercel.app'
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sewaintop.ai.id'
   return {
     title: `${laptop.name} — Sewa Jakarta`,
     description: laptop.description,
@@ -75,8 +74,19 @@ export default async function LaptopDetailPage({
   }
   if (!laptop) notFound()
 
+  // Fetch related laptops — same category, exclude current
+  let allLaptops: typeof FALLBACK_LAPTOPS = []
+  try {
+    allLaptops = await getLaptops()
+  } catch {
+    allLaptops = FALLBACK_LAPTOPS
+  }
+  const relatedLaptops = allLaptops
+    .filter((l) => l.category === laptop.category && l.slug !== laptop.slug)
+    .slice(0, 3)
+
   const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rental-laptop-lp.vercel.app'
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sewaintop.ai.id'
   const inStock = laptop.status === 'Available'
 
   const productJsonLd = {
@@ -113,7 +123,7 @@ export default async function LaptopDetailPage({
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
+    <main className="mx-auto max-w-7xl px-5 py-8 sm:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
@@ -122,13 +132,7 @@ export default async function LaptopDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <Link
-        href="/laptop"
-        className="mb-8 inline-flex items-center gap-1 font-body text-sm text-ink-muted transition-colors hover:text-ink"
-      >
-        <span aria-hidden>←</span> Kembali ke Katalog
-      </Link>
-      <LaptopDetail laptop={laptop} />
+      <LaptopDetail laptop={laptop} relatedLaptops={relatedLaptops} />
     </main>
   )
 }

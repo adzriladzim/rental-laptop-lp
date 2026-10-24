@@ -3,18 +3,26 @@ import { formatIDR } from '@/lib/laptops'
 import { buildWaLink, BUSINESS_WA } from '@/lib/whatsapp'
 import type { Package } from '@/lib/api'
 
-export function PackageCard({ pkg }: { pkg: Package }) {
+export function PackageCard({ pkg, featured }: { pkg: Package; featured?: boolean }) {
   const waHref = buildWaLink(
     BUSINESS_WA,
     `Halo! Saya tertarik dengan paket "${pkg.name}". Bisa info ketersediaan?`,
   )
 
   return (
-    <article className="flex flex-col rounded-2xl border border-border bg-paper p-6 transition-all hover:shadow-card">
-      <p className="font-body text-xs uppercase tracking-wider text-ink">Paket Bundling</p>
-      <h3 className="mt-1 font-display text-xl text-ink">{pkg.name}</h3>
+    <article
+      className={`flex flex-col rounded-2xl border p-6 transition-all ${
+        featured
+          ? 'border-accent bg-accent/5 shadow-card ring-1 ring-accent/15'
+          : 'border-border bg-paper hover:shadow-card'
+      }`}
+    >
+      <p className="font-body text-[11px] font-semibold uppercase tracking-[0.15em] text-ink-muted">
+        Paket Bundling
+      </p>
+      <h3 className="mt-1 font-display text-xl font-bold text-ink">{pkg.name}</h3>
       {pkg.description && (
-        <p className="mt-2 font-body text-sm text-ink-muted">{pkg.description}</p>
+        <p className="mt-2 font-body text-sm leading-relaxed text-ink-muted">{pkg.description}</p>
       )}
 
       <div className="mt-4 flex items-baseline gap-2">
@@ -22,11 +30,11 @@ export function PackageCard({ pkg }: { pkg: Package }) {
         <p className="font-body text-sm text-ink-muted">/ {pkg.durationDays} hari</p>
       </div>
 
-      <p className="mt-4 font-body text-xs text-ink-muted">
+      <p className="mt-3 rounded-lg bg-paper-subtle px-3 py-2 font-body text-xs text-ink-muted">
         Termasuk {pkg.laptopIds.length} unit laptop
       </p>
 
-      <div className="mt-6 flex gap-3">
+      <div className="mt-5 flex gap-3">
         <Button href="/pesan" size="sm" className="flex-1">
           Pesan Sekarang
         </Button>

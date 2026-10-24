@@ -10,7 +10,7 @@ const interTight = Inter_Tight({ subsets: ['latin'], variable: '--font-inter-tig
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rental-laptop-lp.vercel.app',
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sewaintop.ai.id',
   ),
   title: {
     default: 'Sewaintop — Sewa Laptop Profesional Jakarta',
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
 }
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sewaintop.com'
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://sewaintop.ai.id'
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',

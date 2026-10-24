@@ -11,7 +11,6 @@ export const metadata: Metadata = {
     'Paket bundling laptop siap pakai dan tier harga berdasarkan durasi sewa. Semakin lama, semakin hemat.',
 }
 
-// Graceful fallbacks when the backend is unreachable at build/runtime.
 const FALLBACK_PACKAGES: Package[] = [
   {
     id: 'student-starter',
@@ -63,73 +62,150 @@ export default async function PaketPage() {
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-12 sm:py-16">
-      <header className="mb-10 grid animate-fade-up gap-4 md:grid-cols-12">
+      {/* Asymmetric header */}
+      <header className="mb-10 grid items-end gap-4 md:grid-cols-12">
         <div className="md:col-span-7">
-          <p className="font-body text-sm uppercase tracking-widest text-ink">Paket</p>
-          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
+          <p className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">
+            Paket
+          </p>
+          <h1
+            className="mt-3 font-display text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl"
+            style={{ overflowWrap: 'anywhere', minWidth: 0 }}
+          >
             Paket Bundling <em className="text-ink italic">Siap</em> Sewa
           </h1>
         </div>
-        <p className="self-end font-body text-base text-ink-muted md:col-span-5">
+        <p className="self-end font-body text-base leading-relaxed text-ink-muted md:col-span-5">
           Pilih paket laptop siap pakai, plus diskon tier berdasarkan durasi sewa.
         </p>
       </header>
 
       {/* Packages */}
       <section className="mb-16">
-        <h2 className="mb-6 font-display text-3xl text-ink">Pilihan Paket</h2>
+        <h2 className="mb-6 font-display text-2xl font-bold text-ink">Pilihan Paket</h2>
         {packages.length === 0 ? (
           <p className="font-body text-sm text-ink-muted">Belum ada paket tersedia saat ini.</p>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {packages.map((pkg) => (
-              <PackageCard key={pkg.id} pkg={pkg} />
+            {packages.map((pkg, i) => (
+              <div key={pkg.id} className={i === 1 ? 'lg:-mt-4' : ''}>
+                <PackageCard pkg={pkg} featured={i === 1} />
+              </div>
             ))}
           </div>
         )}
       </section>
 
-      {/* Pricing tiers */}
+      {/* Pricing tiers — comparison table */}
       <section>
-        <h2 className="mb-2 font-display text-3xl text-ink">Tier Harga</h2>
+        <h2 className="mb-2 font-display text-2xl font-bold text-ink">Tier Harga</h2>
         <p className="mb-8 max-w-2xl font-body text-ink-muted">
           Diskon otomatis berdasarkan durasi sewa. Semakin lama, semakin hemat.
         </p>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+
+        {/* Desktop: comparison table */}
+        <div className="hidden overflow-hidden rounded-2xl border border-border bg-paper shadow-card sm:block">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border bg-paper-subtle">
+                <th className="px-6 py-4 text-left font-display text-sm font-semibold text-ink">
+                  Durasi
+                </th>
+                <th className="px-6 py-4 text-left font-display text-sm font-semibold text-ink">
+                  Periode
+                </th>
+                <th className="px-6 py-4 text-right font-display text-sm font-semibold text-ink">
+                  Diskon
+                </th>
+                <th className="px-6 py-4 text-right font-display text-sm font-semibold text-ink">
+                  Estimasi/Hari
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {tiers.map((t) => {
+                const isBest = t.discountPercent >= 40
+                const perDay = t.discountPercent > 0
+                  ? Math.round(175000 * (1 - t.discountPercent / 100))
+                  : 175000
+                return (
+                  <tr
+                    key={t.id}
+                    className={`border-b border-border last:border-0 ${
+                      isBest ? 'bg-accent/5' : ''
+                    }`}
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className="font-display text-base font-bold text-ink">
+                          {t.name}
+                        </span>
+                        {isBest && (
+                          <span className="rounded-lg bg-accent px-2.5 py-0.5 font-body text-[10px] font-bold uppercase tracking-wider text-accent-fg">
+                            Hemat
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 font-body text-sm text-ink-muted">
+                      {t.maxDays == null ? `${t.minDays}+ hari` : `${t.minDays}–${t.maxDays} hari`}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <span className={`font-display text-xl font-bold ${
+                        isBest ? 'text-accent' : 'text-ink'
+                      }`}>
+                        {t.discountPercent}%
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right font-display text-sm font-medium text-ink">
+                      {formatIDR(perDay)}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile: stacked cards */}
+        <div className="grid gap-4 sm:hidden">
           {tiers.map((t) => {
             const isBest = t.discountPercent >= 40
+            const perDay = t.discountPercent > 0
+              ? Math.round(175000 * (1 - t.discountPercent / 100))
+              : 175000
             return (
               <div
                 key={t.id}
-                className={`relative flex flex-col rounded-2xl border p-6 ${
-                  isBest ? 'border-accent bg-accent/5 shadow-card' : 'border-border bg-paper'
+                className={`relative rounded-2xl border p-5 ${
+                  isBest
+                    ? 'border-accent bg-accent/5 shadow-card'
+                    : 'border-border bg-paper'
                 }`}
               >
                 {isBest && (
-                  <span className="absolute -top-3 left-6 rounded-full bg-accent px-3 py-1 font-body text-xs font-semibold text-accent-fg">
+                  <span className="absolute -top-3 left-5 rounded-lg bg-accent px-3 py-1 font-body text-[10px] font-bold uppercase tracking-wider text-accent-fg">
                     Paling Hemat
                   </span>
                 )}
-                <p className="font-body text-xs uppercase tracking-wider text-ink">{t.name}</p>
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="font-display text-lg font-bold text-ink">{t.name}</p>
+                  <p className="font-display text-2xl font-bold text-accent">{t.discountPercent}%</p>
+                </div>
                 <p className="mt-1 font-body text-sm text-ink-muted">
                   {t.maxDays == null ? `${t.minDays}+ hari` : `${t.minDays}–${t.maxDays} hari`}
                 </p>
-                <p className="mt-4 font-display text-3xl font-bold text-ink">{t.discountPercent}%</p>
-                <p className="mt-1 font-body text-sm font-semibold text-ink">
-                  {t.discountPercent > 0 ? `Hemat ${t.discountPercent}% dari harga dasar` : 'Harga dasar'}
-                </p>
-                <p className="mt-3 flex-1 font-body text-sm text-ink-muted">
-                  {t.discountPercent > 0
-                    ? `Diskon ${t.discountPercent}% berlaku untuk durasi ini.`
-                    : 'Durasi pendek tanpa diskon.'}
+                <p className="mt-2 font-body text-xs text-ink-muted">
+                  Estimasi {formatIDR(perDay)}/hari
                 </p>
               </div>
             )
           })}
         </div>
-        <p className="mt-6 font-body text-sm text-ink-muted">
-          *Dasar perhitungan mengikuti harga unit {formatIDR(175000)}/hari. Deposit & syarat sewa lihat{' '}
-          <a href="/legal/syarat-ketentuan" className="text-ink underline">
+
+        <p className="mt-6 font-body text-xs text-ink-muted">
+          *Dasar perhitungan mengikuti harga unit {formatIDR(175000)}/hari. DP Booking Unit & syarat sewa lihat{' '}
+          <a href="/legal/syarat-ketentuan" className="font-semibold text-ink underline-offset-2 hover:underline">
             Syarat &amp; Ketentuan
           </a>
           .

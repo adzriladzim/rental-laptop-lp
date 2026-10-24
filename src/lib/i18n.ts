@@ -8,7 +8,6 @@ export const translations = {
   id: {
     nav: {
       catalog: 'Katalog',
-      recommendation: 'Rekomendasi',
       price: 'Harga',
       testimonial: 'Testimoni',
       book: 'Pesan Sekarang',
@@ -19,7 +18,6 @@ export const translations = {
       contact: 'Kontak',
       catalog: 'Katalog Laptop',
       pricePackage: 'Harga & Paket',
-      recommendation: 'Rekomendasi',
       checkStatus: 'Cek Status Booking',
       about: 'Tentang Kami',
       testimonial: 'Testimoni',
@@ -56,7 +54,7 @@ export const translations = {
         'Pilih unit, tentukan tanggal, isi data — selesai. Tanpa antri, tanpa tanya-tanya.',
       how1Title: 'Pilih Unit',
       how1Desc:
-        'Jelajahi katalog atau gunakan rekomendasi cerdas untuk menemukan laptop yang tepat.',
+        'Jelajahi katalog untuk menemukan laptop yang tepat sesuai kebutuhan Anda.',
       how2Title: 'Atur Tanggal',
       how2Desc:
         'Cek ketersediaan real-time, pilih masa sewa — harian, mingguan, atau bulanan.',
@@ -80,10 +78,20 @@ export const translations = {
       ctaTitle: 'Siap Sewa Laptop?',
       ctaDesc:
         'Mulai dari laptop kerja harian hingga unit bisnis bulanan. Pilih yang cocok, pesan dalam hitungan menit.',
-      ctaRecommend: 'Cari dengan Rekomendasi →',
+      ctaRecommend: 'Lihat Katalog →',
+      unitPopulerTitle: 'Unit Populer',
+      unitPopulerSubtitle: 'Laptop paling banyak disewa minggu ini — ready stock, harga tetap.',
+      chatAdmin: 'Bingung Pilih?',
+      chatAdminDesc: 'Chat admin untuk rekomendasi personal sesuai kebutuhan Anda.',
       statUnits: 'Unit Siap',
       statSteps: 'Langkah Booking',
       statSameDay: 'Kirim Hari Sama',
+      statCustomers: '1000+ Customer',
+      statRating: '4.9 Rating',
+      testimonialTitle: 'Dipercaya oleh 1000+ Customer',
+      testimonialSubtitle:
+        'Review asli dari pengguna yang sudah menyewa laptop untuk kerja, kuliah, dan event di Jabodetabek.',
+      ctaUrgency: 'Mulai dari Rp 175.000/hari — unit terbatas setiap minggu',
     },
     harga: {
       eyebrow: 'Harga',
@@ -101,7 +109,7 @@ export const translations = {
       viewUnits: 'Lihat Unit',
       waAsk: 'Tanya via WhatsApp',
       footerNote:
-        '*Durasi 7 hari ke atas dihitung pro-rata per hari. Deposit & syarat sewa lihat',
+        '*Durasi 7 hari ke atas dihitung pro-rata per hari. DP Booking Unit & syarat sewa lihat',
       terms: 'Syarat & Ketentuan',
       bundlesTitle: 'Paket Bundling',
       bundlesSubtitle:
@@ -232,8 +240,8 @@ export const translations = {
       comingSoon: 'Segera hadir',
       ctaTitle: 'Sewa laptop sesuai kebutuhan',
       ctaSubtitle:
-        'Belum yakin unit mana? Coba rekomendasi cerdas kami dalam 5 pertanyaan.',
-      ctaButton: 'Mulai Rekomendasi',
+        'Belum yakin unit mana? Chat admin kami untuk rekomendasi personal.',
+      ctaButton: 'Lihat Katalog',
       ctaWa: 'Chat WhatsApp',
     },
     testimoni: {
@@ -262,16 +270,9 @@ export const translations = {
       notBooked: 'Belum booking?',
       bookNow: 'Pesan sekarang →',
     },
-    rekomendasi: {
-      eyebrow: 'Pencari Laptop',
-      title1: 'Laptop',
-      title2: 'Tepat',
-      title3: 'Tanpa Ribet',
-      subtitle:
-        'Atur kebutuhan dan budget Anda — hasil langsung tampil. Pesan mandiri atau tanya via WhatsApp.',
-    },
     catalog: {
       filterPrompt: 'Mau dipakai untuk apa?',
+      recommendLabel: 'Rekomendasi untuk Anda',
       all: 'Semua Kebutuhan',
       customChip: '✏️ Lainnya (Tulis Sendiri)',
       customPlaceholder: 'Tulis kebutuhan Anda, misal: video editing 4K, AR/VR dev...',
@@ -348,7 +349,7 @@ export const translations = {
       no: 'Tidak',
       agreePrefix: 'Saya menyetujui',
       agreeSuffix: 'sewa laptop.',
-      depositLine: 'Deposit Rp 50.000 wajib dibayarkan sebelum unit dikirim',
+      depositLine: 'DP Booking Unit sebesar Rp 50.000 wajib dibayarkan sebelum unit dikirim',
       cancelLine: 'Pembatalan H-1 kena denda 50%',
       damageLine: 'Kerusakan unit ditanggung penyewa',
       total: 'Total',
@@ -378,7 +379,6 @@ export const translations = {
   en: {
     nav: {
       catalog: 'Catalog',
-      recommendation: 'Recommendation',
       price: 'Pricing',
       testimonial: 'Testimonials',
       book: 'Book Now',
@@ -389,7 +389,6 @@ export const translations = {
       contact: 'Contact',
       catalog: 'Laptop Catalog',
       pricePackage: 'Pricing & Packages',
-      recommendation: 'Recommendation',
       checkStatus: 'Check Booking Status',
       about: 'About Us',
       testimonial: 'Testimonials',
@@ -425,7 +424,7 @@ export const translations = {
       howSubtitle: 'Pick a unit, set dates, fill in your details — done. No queue, no back-and-forth.',
       how1Title: 'Pick a Unit',
       how1Desc:
-        'Browse the catalog or use smart recommendations to find the right laptop.',
+        'Browse the catalog to find the right laptop for your needs.',
       how2Title: 'Set Dates',
       how2Desc:
         'Check real-time availability and choose your rental period — daily, weekly, or monthly.',
@@ -449,10 +448,20 @@ export const translations = {
       ctaTitle: 'Ready to Rent a Laptop?',
       ctaDesc:
         'From daily work laptops to monthly business units. Pick what fits, book in minutes.',
-      ctaRecommend: 'Find with Recommendations →',
+      ctaRecommend: 'View Catalog →',
+      unitPopulerTitle: 'Popular Units',
+      unitPopulerSubtitle: 'Most rented laptops this week — ready stock, fixed pricing.',
+      chatAdmin: 'Can\'t Decide?',
+      chatAdminDesc: 'Chat admin for a personal recommendation based on your needs.',
       statUnits: 'Units Ready',
       statSteps: 'Booking Steps',
       statSameDay: 'Same-Day Delivery',
+      statCustomers: '1000+ Customers',
+      statRating: '4.9 Rating',
+      testimonialTitle: 'Trusted by 1000+ Customers',
+      testimonialSubtitle:
+        'Real reviews from users who rented laptops for work, study, and events across Jabodetabek.',
+      ctaUrgency: 'Starting from Rp 175,000/day — limited units every week',
     },
     harga: {
       eyebrow: 'Pricing',
@@ -470,7 +479,7 @@ export const translations = {
       viewUnits: 'View Units',
       waAsk: 'Ask via WhatsApp',
       footerNote:
-        '*Durations of 7+ days are calculated pro-rata per day. Deposit & rental terms: see',
+        '*Durations of 7+ days are calculated pro-rata per day. DP Booking Unit & rental terms: see',
       terms: 'Terms & Conditions',
       bundlesTitle: 'Bundle Packages',
       bundlesSubtitle:
@@ -602,8 +611,8 @@ export const translations = {
       comingSoon: 'Coming soon',
       ctaTitle: 'Rent a laptop that fits your needs',
       ctaSubtitle:
-        'Not sure which unit? Try our smart recommendation in 5 questions.',
-      ctaButton: 'Start Recommendation',
+        'Not sure which unit? Chat our admin for a personal recommendation.',
+      ctaButton: 'View Catalog',
       ctaWa: 'Chat on WhatsApp',
     },
     testimoni: {
@@ -632,16 +641,9 @@ export const translations = {
       notBooked: 'Not booked yet?',
       bookNow: 'Book now →',
     },
-    rekomendasi: {
-      eyebrow: 'Laptop Finder',
-      title1: 'The Right',
-      title2: 'Laptop',
-      title3: 'Without Hassle',
-      subtitle:
-        'Set your needs and budget — results appear instantly. Book yourself or ask via WhatsApp.',
-    },
     catalog: {
       filterPrompt: 'What will you use it for?',
+      recommendLabel: 'Recommended for You',
       all: 'All Needs',
       customChip: '✏️ Other (Write your own)',
       customPlaceholder: 'Describe your need, e.g. 4K video editing, AR/VR dev...',
@@ -718,7 +720,7 @@ export const translations = {
       no: 'No',
       agreePrefix: 'I agree to the',
       agreeSuffix: 'for laptop rental.',
-      depositLine: 'Deposit of Rp 50,000 must be paid before unit delivery',
+      depositLine: 'DP Booking Unit of Rp 50,000 must be paid before unit delivery',
       cancelLine: 'Cancellation 1 day before incurs a 50% penalty',
       damageLine: 'Unit damage is the renter\u2019s responsibility',
       total: 'Total',

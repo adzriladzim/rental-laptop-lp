@@ -390,45 +390,53 @@ export function BookingFlow({
         </button>
       )}
 
-      {/* Step indicator — 4 steps */}
-      <ol className="mb-8 flex items-center gap-0">
-        {[
-          { n: 1, label: t.booking.steps.unit },
-          { n: 2, label: t.booking.steps.date },
-          { n: 3, label: t.booking.steps.data },
-          { n: 4, label: t.booking.steps.extra },
-        ].map((s, i) => (
-          <li key={s.n} className="flex flex-1 items-center">
-            <div className="flex items-center gap-2">
-              <span
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display text-sm font-bold transition-colors ${
-                  typeof step === 'number' && step >= s.n
-                    ? 'bg-accent text-accent-fg'
-                    : 'bg-paper-dim text-ink-muted'
-                }`}
-              >
-                {s.n}
-              </span>
-              <span
-                className={`font-display text-sm font-medium ${
-                  typeof step === 'number' && step >= s.n ? 'text-ink' : 'text-ink-muted'
-                }`}
-              >
-                {s.label}
-              </span>
-            </div>
-            {i < 3 && (
-              <div className="mx-3 h-px flex-1 bg-border">
-                <div
-                  className={`h-full transition-all ${
-                    typeof step === 'number' && step > s.n ? 'bg-accent' : ''
+      {/* Step indicator — numbered circles with labels */}
+      <div className="mb-8">
+        <ol className="flex items-center gap-0">
+          {[
+            { n: 1, label: t.booking.steps.unit },
+            { n: 2, label: t.booking.steps.date },
+            { n: 3, label: t.booking.steps.data },
+            { n: 4, label: t.booking.steps.extra },
+          ].map((s, i) => (
+            <li key={s.n} className="flex flex-1 items-center">
+              <div className="flex items-center gap-2">
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display text-sm font-bold transition-colors ${
+                    typeof step === 'number' && step >= s.n
+                      ? 'bg-accent text-accent-fg'
+                      : 'bg-paper-dim text-ink-faint'
                   }`}
-                />
+                >
+                  {typeof step === 'number' && step > s.n ? (
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    s.n
+                  )}
+                </span>
+                <span
+                  className={`hidden font-display text-sm font-medium sm:inline ${
+                    typeof step === 'number' && step >= s.n ? 'text-ink' : 'text-ink-faint'
+                  }`}
+                >
+                  {s.label}
+                </span>
               </div>
-            )}
-          </li>
-        ))}
-      </ol>
+              {i < 3 && (
+                <div className="mx-3 h-px flex-1 bg-border">
+                  <div
+                    className={`h-full transition-all duration-500 ${
+                      typeof step === 'number' && step > s.n ? 'bg-accent' : ''
+                    }`}
+                  />
+                </div>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
 
       {/* STEP 1 — pilih unit */}
       {step === 1 && (
@@ -730,6 +738,32 @@ export function BookingFlow({
             </button>
           </div>
         </form>
+      )}
+
+      {/* Sticky estimated total — visible when there's an estimate */}
+      {estimate > 0 && typeof step === 'number' && (
+        <div className="sticky bottom-0 z-10 -mx-5 mt-6 border-t border-border bg-paper/95 px-5 py-3 backdrop-blur-sm sm:-mx-8 sm:px-8">
+          <div className="mx-auto flex max-w-2xl items-center justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-ink-muted">
+                Estimasi Total
+              </p>
+              <p className="font-display text-xl font-bold text-ink">
+                {formatIDR(estimate)}
+              </p>
+            </div>
+            {step < 4 && (
+              <button
+                type="button"
+                onClick={step === 1 ? goStep2 : step === 2 ? goStep3 : goStep4}
+                disabled={step === 2 && (!startDate || !endDate || available === false)}
+                className="inline-flex min-h-[44px] items-center rounded-xl bg-accent px-6 font-display text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-hover disabled:opacity-50"
+              >
+                {t.booking.next}
+              </button>
+            )}
+          </div>
+        </div>
       )}
 
     </div>
