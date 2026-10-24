@@ -38,6 +38,7 @@ export const translations = {
       title3: 'Anda Butuhkan',
       subtitle:
         'Sewa laptop harian, mingguan, atau bulanan — tanpa ribet. Pilih unit, atur tanggal, pesan dalam 3 langkah.',
+      priceFrom: 'Mulai dari Rp 175.000/hari',
       unitReady: '50+ Unit Siap',
       sameDay: 'Pengiriman Hari Sama',
       transparent: 'Harga Transparan',
@@ -409,6 +410,7 @@ export const translations = {
       title3: 'You Need It',
       subtitle:
         'Rent a laptop daily, weekly, or monthly — hassle-free. Pick a unit, set dates, book in 3 steps.',
+      priceFrom: 'Starting from Rp 175,000/day',
       unitReady: '50+ Units Ready',
       sameDay: 'Same-Day Delivery',
       transparent: 'Transparent Pricing',

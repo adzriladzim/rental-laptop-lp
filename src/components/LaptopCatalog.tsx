@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useI18n } from '@/components/I18nProvider'
+import { LaptopImage } from '@/components/LaptopImage'
 import {
   USE_CASES,
   formatIDR,
-  laptopImage,
   type Laptop,
   type UseCaseId,
 } from '@/lib/laptops'
@@ -26,31 +25,6 @@ const SORT_OPTIONS: { key: SortKey; label: string; labelEn: string }[] = [
   { key: 'popular', label: 'Terlaris', labelEn: 'Popular' },
   { key: 'rating', label: 'Rating', labelEn: 'Rating' },
 ]
-
-function LaptopImage({ laptop }: { laptop: Laptop }) {
-  const [errored, setErrored] = useState(false)
-  const src = laptop.photoUrl ?? laptopImage(laptop.slug)
-  if (errored) {
-    return (
-      <div className="flex h-full w-full items-center justify-center bg-navy-950/[0.03]">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.2} className="h-16 w-16 text-navy-950/10" aria-hidden>
-          <rect x="3" y="4" width="18" height="12" rx="1" />
-          <path strokeLinecap="round" d="M2 20h20" />
-        </svg>
-      </div>
-    )
-  }
-  return (
-    <Image
-      src={src}
-      alt={laptop.name}
-      fill
-      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-      onError={() => setErrored(true)}
-    />
-  )
-}
 
 export function LaptopCatalog({ laptops }: { laptops: Laptop[] }) {
   const { t } = useI18n()

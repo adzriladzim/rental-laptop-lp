@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
+import { LaptopImage } from '@/components/LaptopImage'
 import { AvailabilityCalendar, formatDatesSummary } from '@/components/AvailabilityCalendar'
 import { LocationPicker, mapsLinkFor } from '@/components/LocationPicker'
 import { WhatsAppButton } from '@/components/WhatsAppButton'
 import { BUSINESS_WA } from '@/lib/whatsapp'
-import { formatIDR, laptopImage, type Laptop, USE_CASES } from '@/lib/laptops'
+import { formatIDR, type Laptop, USE_CASES } from '@/lib/laptops'
 
 /* Hallmark · macrostructure: detail-sidebar · genre: editorial · theme: custom (brand-anchored)
  * nav: N5 · footer: Ft5
@@ -60,10 +60,8 @@ export function LaptopDetail({ laptop, relatedLaptops = [] }: LaptopDetailProps)
         <div className="lg:col-span-7">
           {/* Hero image — editorial style with varied corners */}
           <div className="relative mb-6 aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-lg">
-            <Image
-              src={laptopImage(laptop.slug)}
-              alt={laptop.name}
-              fill
+            <LaptopImage
+              laptop={laptop}
               priority
               sizes="(max-width: 1024px) 100vw, 58vw"
               className="object-cover"
@@ -239,10 +237,8 @@ export function LaptopDetail({ laptop, relatedLaptops = [] }: LaptopDetailProps)
                 className="group block overflow-hidden rounded-2xl border border-border bg-paper transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_32px_-6px_rgba(13,27,61,0.10)] hover:border-navy-950/20"
               >
                 <div className="relative aspect-[3/2] w-full overflow-hidden">
-                  <Image
-                    src={laptopImage(rel.slug)}
-                    alt={rel.name}
-                    fill
+                  <LaptopImage
+                    laptop={rel}
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                   />

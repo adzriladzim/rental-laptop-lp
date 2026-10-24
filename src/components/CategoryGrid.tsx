@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
-import { USE_CASES, formatIDR, laptopImage, type Laptop, type LaptopCategory } from '@/lib/laptops'
+import { LaptopImage } from '@/components/LaptopImage'
+import { USE_CASES, formatIDR, type Laptop, type LaptopCategory } from '@/lib/laptops'
 import { Button } from '@/components/ui/Button'
 
 /* Hallmark · macrostructure: category-grid · genre: editorial · theme: custom (brand-anchored)
@@ -114,13 +114,7 @@ export function CategoryGrid({ laptops, category, categorySlug, description }: C
               className="group block overflow-hidden rounded-2xl border border-border bg-paper transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_40px_-8px_rgba(13,27,61,0.12)] hover:border-navy-950/20"
             >
               <div className={`relative w-full overflow-hidden ${idx % 4 === 0 ? 'aspect-[16/10]' : 'aspect-[3/2]'}`}>
-                <Image
-                  src={laptopImage(laptop.slug)}
-                  alt={laptop.name}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                />
+                <LaptopImage laptop={laptop} sizes="(max-width: 768px) 100vw, 33vw" />
                 <div className="absolute top-3 left-3">
                   <span className="inline-flex items-center gap-1 rounded-lg bg-paper/90 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-navy-950 shadow-sm">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />

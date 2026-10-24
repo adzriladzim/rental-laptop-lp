@@ -9,8 +9,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { useI18n } from '@/components/I18nProvider'
+import { LaptopImage } from '@/components/LaptopImage'
 import { TESTIMONIALS } from '@/lib/testimonials'
-import { FALLBACK_LAPTOPS, formatIDR, laptopImage } from '@/lib/laptops'
+import { FALLBACK_LAPTOPS, formatIDR } from '@/lib/laptops'
 
 export default function Home() {
   const { t } = useI18n()
@@ -79,7 +80,7 @@ export default function Home() {
   const displayTestimonials = TESTIMONIALS.slice(0, 3)
 
   const popularUnits = FALLBACK_LAPTOPS.filter((l) =>
-    ['macbook-air-m1', 'lenovo-thinkpad-t480', 'dell-latitude-7310'].includes(l.slug),
+    ['macbook-pro-2019', 'lenovo-thinkpad-t480', 'dell-latitude-7310'].includes(l.slug),
   )
 
   const WA_ADMIN = '6281296352115'
@@ -127,8 +128,12 @@ export default function Home() {
               {t.hero.title3}
             </h1>
 
-            <p className="mb-8 max-w-xl text-lg leading-relaxed text-paper/65">
+            <p className="mb-4 max-w-xl text-lg leading-relaxed text-paper/65">
               {t.hero.subtitle}
+            </p>
+
+            <p className="mb-8 inline-flex items-center gap-2 rounded-lg border border-paper/20 bg-paper/[0.07] px-3 py-1.5 text-sm font-semibold text-paper">
+              {t.hero.priceFrom}
             </p>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
@@ -173,7 +178,7 @@ export default function Home() {
             <h2 className="mb-3 font-display text-3xl font-bold tracking-tight text-ink lg:text-4xl">
               {t.home.howTitle}
             </h2>
-            <p className="text-ink-muted">{t.home.howSubtitle}</p>
+            <p className="text-lg leading-relaxed text-ink-muted">{t.home.howSubtitle}</p>
           </div>
 
           {/* Horizontal step flow — asymmetric: first step larger */}
@@ -200,7 +205,7 @@ export default function Home() {
                 <h3 className="mb-2 font-display text-lg font-semibold text-ink">
                   {step.title}
                 </h3>
-                <p className="text-sm leading-relaxed text-ink-muted">{step.desc}</p>
+                <p className="text-base leading-relaxed text-ink-muted">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -214,7 +219,7 @@ export default function Home() {
             <h2 className="mb-3 font-display text-3xl font-bold tracking-tight text-ink lg:text-4xl">
               {t.home.unitPopulerTitle}
             </h2>
-            <p className="text-ink-muted">{t.home.unitPopulerSubtitle}</p>
+            <p className="text-lg leading-relaxed text-ink-muted">{t.home.unitPopulerSubtitle}</p>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -227,13 +232,7 @@ export default function Home() {
                 }`}
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
-                  <Image
-                    src={laptopImage(laptop.slug)}
-                    alt={laptop.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                  />
+                  <LaptopImage laptop={laptop} />
                   {i === 0 && (
                     <span className="absolute left-3 top-3 rounded-lg bg-accent px-3 py-1 text-xs font-bold text-white shadow-md">
                       Terlaris
@@ -253,9 +252,14 @@ export default function Home() {
                   <h3 className="mb-1 font-display text-lg font-bold text-ink group-hover:text-accent transition-colors">
                     {laptop.name}
                   </h3>
-                  <p className="mb-3 text-sm text-ink-muted line-clamp-2">{laptop.description}</p>
-                  <div className="flex items-center justify-between border-t border-border pt-3">
-                    <span className="text-xs text-ink-muted">{laptop.specs.processor} · {laptop.specs.ram}</span>
+                  <p className="mb-3 text-base leading-relaxed text-ink-muted line-clamp-2">{laptop.description}</p>
+                  <ul className="mb-3 space-y-1 border-t border-border pt-3 text-[13px] leading-snug text-ink-muted">
+                    <li>{laptop.specs.processor}</li>
+                    <li>{laptop.specs.ram} · {laptop.specs.storage}</li>
+                    {laptop.specs.screen && <li>{laptop.specs.screen}</li>}
+                  </ul>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-ink-muted">{laptop.category}</span>
                     <span className="inline-flex items-center gap-1 text-sm font-bold text-accent">
                       Pesan <span aria-hidden className="transition-transform group-hover:translate-x-0.5">→</span>
                     </span>
@@ -273,7 +277,7 @@ export default function Home() {
               href={`https://wa.me/${WA_ADMIN}?text=${encodeURIComponent('Halo, saya bingung memilih laptop yang cocok untuk kebutuhan saya. Bisa dibantu?')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg bg-wa px-5 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-paper px-5 py-2.5 text-sm font-semibold text-ink transition-all hover:border-wa hover:text-wa"
             >
               <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden>
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
@@ -291,7 +295,7 @@ export default function Home() {
             <h2 className="mb-3 font-display text-3xl font-bold tracking-tight text-ink lg:text-4xl">
               {t.home.whyTitle}
             </h2>
-            <p className="text-ink-muted">{t.home.whySubtitle}</p>
+            <p className="text-lg leading-relaxed text-ink-muted">{t.home.whySubtitle}</p>
           </div>
 
           {/* Asymmetric grid: 1 large + 2 stacked left, 2 stacked right */}
@@ -307,7 +311,7 @@ export default function Home() {
                     {f.icon}
                   </div>
                   <h3 className="mb-2 font-display text-lg font-semibold text-ink">{f.title}</h3>
-                  <p className="text-sm leading-relaxed text-ink-muted">{f.desc}</p>
+                  <p className="text-base leading-relaxed text-ink-muted">{f.desc}</p>
                 </div>
               ))}
             </div>
@@ -323,7 +327,7 @@ export default function Home() {
                     {f.icon}
                   </div>
                   <h3 className="mb-2 font-display text-lg font-semibold text-ink">{f.title}</h3>
-                  <p className="text-sm leading-relaxed text-ink-muted">{f.desc}</p>
+                  <p className="text-base leading-relaxed text-ink-muted">{f.desc}</p>
                 </div>
               ))}
             </div>
@@ -338,7 +342,7 @@ export default function Home() {
             <h2 className="mb-3 font-display text-3xl font-bold tracking-tight text-ink lg:text-4xl">
               {t.home.testimonialTitle}
             </h2>
-            <p className="text-ink-muted">{t.home.testimonialSubtitle}</p>
+            <p className="text-lg leading-relaxed text-ink-muted">{t.home.testimonialSubtitle}</p>
           </div>
 
           {/* Testimonial cards — 3 across, asymmetric heights on desktop */}
@@ -364,7 +368,7 @@ export default function Home() {
                   ))}
                 </div>
 
-                <p className="mb-4 flex-1 text-sm leading-relaxed text-ink">
+                <p className="mb-4 flex-1 text-base leading-relaxed text-ink">
                   &ldquo;{testi.text}&rdquo;
                 </p>
 
