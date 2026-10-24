@@ -59,7 +59,7 @@ export function LaptopDetail({ laptop, relatedLaptops = [] }: LaptopDetailProps)
         {/* Main content — editorial layout */}
         <div className="lg:col-span-7">
           {/* Hero image — editorial style with varied corners */}
-          <div className="relative mb-6 aspect-[4/3] w-full overflow-hidden rounded-3xl shadow-lg">
+          <div className="relative mb-6 aspect-[4/5] w-full overflow-hidden rounded-3xl shadow-lg">
             <LaptopImage
               laptop={laptop}
               priority
@@ -236,7 +236,7 @@ export function LaptopDetail({ laptop, relatedLaptops = [] }: LaptopDetailProps)
                 href={`/laptop/${rel.slug}`}
                 className="group block overflow-hidden rounded-2xl border border-border bg-paper transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_32px_-6px_rgba(13,27,61,0.10)] hover:border-navy-950/20"
               >
-                <div className="relative aspect-[3/2] w-full overflow-hidden">
+                <div className="relative aspect-[4/5] w-full overflow-hidden">
                   <LaptopImage
                     laptop={rel}
                     sizes="(max-width: 768px) 100vw, 33vw"

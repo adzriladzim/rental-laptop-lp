@@ -113,7 +113,7 @@ export function CategoryGrid({ laptops, category, categorySlug, description }: C
               href={`/laptop/${laptop.slug}`}
               className="group block overflow-hidden rounded-2xl border border-border bg-paper transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_40px_-8px_rgba(13,27,61,0.12)] hover:border-navy-950/20"
             >
-              <div className={`relative w-full overflow-hidden ${idx % 4 === 0 ? 'aspect-[16/10]' : 'aspect-[3/2]'}`}>
+              <div className="relative w-full overflow-hidden aspect-[4/5]">
                 <LaptopImage laptop={laptop} sizes="(max-width: 768px) 100vw, 33vw" />
                 <div className="absolute top-3 left-3">
                   <span className="inline-flex items-center gap-1 rounded-lg bg-paper/90 backdrop-blur-sm px-2.5 py-1 text-xs font-semibold text-navy-950 shadow-sm">

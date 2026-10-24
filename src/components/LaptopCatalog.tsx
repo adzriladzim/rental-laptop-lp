@@ -150,8 +150,8 @@ export function LaptopCatalog({ laptops }: { laptops: Laptop[] }) {
             href={`/laptop/${laptop.slug}`}
             className="group block overflow-hidden rounded-2xl border border-border bg-paper transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_40px_-8px_rgba(13,27,61,0.12)] hover:border-navy-950/20"
           >
-            {/* Image — varied aspect ratios via index for variance */}
-            <div className={`relative w-full overflow-hidden ${idx % 5 === 0 ? 'aspect-[16/10]' : idx % 3 === 0 ? 'aspect-[4/3]' : 'aspect-[3/2]'}`}>
+            {/* Image — 4/5 matches the portrait source, so nothing gets cropped */}
+            <div className="relative w-full overflow-hidden aspect-[4/5]">
               <LaptopImage laptop={laptop} />
               {/* Availability badge */}
               <div className="absolute top-3 left-3">

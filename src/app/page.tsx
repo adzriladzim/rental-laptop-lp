@@ -231,7 +231,7 @@ export default function Home() {
                   i === 0 ? 'border-accent ring-1 ring-accent/15 sm:col-span-2 lg:col-span-1' : 'border-border'
                 }`}
               >
-                <div className="relative aspect-[4/3] w-full overflow-hidden">
+                <div className="relative aspect-[4/5] w-full overflow-hidden">
                   <LaptopImage laptop={laptop} />
                   {i === 0 && (
                     <span className="absolute left-3 top-3 rounded-lg bg-accent px-3 py-1 text-xs font-bold text-white shadow-md">
