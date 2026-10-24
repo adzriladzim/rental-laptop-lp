@@ -60,7 +60,7 @@ const organizationJsonLd = {
     addressLocality: 'Jakarta',
     addressCountry: 'ID',
   },
-  telephone: '+6288292123852',
+  telephone: '+6289505968020',
   url: BASE_URL,
   priceRange: 'Rp 175.000 - Rp 500.000',
   areaServed: 'Jakarta',

@@ -22,8 +22,8 @@ export function KontakView({ laptops }: { laptops: { id: string; name: string }[
         </svg>
       ),
       label: t.kontak.phoneLabel,
-      value: '0812 9635 2115',
-      href: 'tel:081296352115',
+      value: '0895 0596 8020',
+      href: 'tel:+6289505968020',
     },
     {
       icon: (

@@ -83,7 +83,7 @@ export default function Home() {
     ['macbook-pro-2019', 'lenovo-thinkpad-t480', 'dell-latitude-7410'].includes(l.slug),
   )
 
-  const WA_ADMIN = '6281296352115'
+  const WA_ADMIN = '6289505968020'
 
   return (
     <div className="bg-paper text-ink font-body">

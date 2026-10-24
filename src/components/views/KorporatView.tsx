@@ -168,7 +168,7 @@ export function KorporatView() {
                 </span>
                 <div>
                   <p className="font-display text-sm font-semibold text-ink">WhatsApp</p>
-                  <p className="font-body text-xs text-ink-muted">+62 812-9635-2115</p>
+                  <p className="font-body text-xs text-ink-muted">+62 895-0596-8020</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">

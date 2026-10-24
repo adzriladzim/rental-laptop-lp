@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useI18n } from '@/components/I18nProvider'
 import { LaptopImage } from '@/components/LaptopImage'
+import { BUSINESS_WA } from '@/lib/whatsapp'
 import {
   USE_CASES,
   formatIDR,
@@ -117,7 +118,7 @@ export function LaptopCatalog({ laptops }: { laptops: Laptop[] }) {
               className="flex-1 rounded-xl border border-border bg-paper px-4 py-2.5 text-sm text-ink placeholder:text-ink-faint focus:border-navy-950 focus:outline-none focus:ring-2 focus:ring-navy-950/10"
             />
             <a
-              href={`https://wa.me/6288292123852?text=${encodeURIComponent(
+              href={`https://wa.me/${BUSINESS_WA}?text=${encodeURIComponent(
                 customText
                   ? `Halo, saya bingung memilih laptop. Kebutuhan saya: ${customText}. Bisa dibantu?`
                   : 'Halo, saya bingung memilih laptop yang cocok untuk kebutuhan saya. Bisa dibantu?'
@@ -257,7 +258,7 @@ export function LaptopCatalog({ laptops }: { laptops: Laptop[] }) {
             <p className="mt-1 text-sm text-ink-muted">Chat admin untuk rekomendasi personal sesuai kebutuhan Anda.</p>
           </div>
           <a
-            href="https://wa.me/6288292123852?text=Halo%2C%20saya%20bingung%20memilih%20laptop%20yang%20cocok%20untuk%20kebutuhan%20saya.%20Bisa%20dibantu%3F"
+            href={`https://wa.me/${BUSINESS_WA}?text=Halo%2C%20saya%20bingung%20memilih%20laptop%20yang%20cocok%20untuk%20kebutuhan%20saya.%20Bisa%20dibantu%3F`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-wa px-6 py-3 text-sm font-semibold text-white transition-all hover:opacity-90 shrink-0"
