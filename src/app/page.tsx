@@ -80,7 +80,7 @@ export default function Home() {
   const displayTestimonials = TESTIMONIALS.slice(0, 3)
 
   const popularUnits = FALLBACK_LAPTOPS.filter((l) =>
-    ['macbook-pro-2019', 'lenovo-thinkpad-t480', 'dell-latitude-7310'].includes(l.slug),
+    ['macbook-pro-2019', 'lenovo-thinkpad-t480', 'dell-latitude-7410'].includes(l.slug),
   )
 
   const WA_ADMIN = '6281296352115'

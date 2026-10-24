@@ -17,8 +17,8 @@ test.describe('Booking happy path', () => {
 
   test('full wizard: pick unit, dates, fill step 3 & 4, submit -> success screen', async ({ page }) => {
     test.setTimeout(90_000)
-    // Use dell-vostro-3400 which has NO seed bookings (lenovo-thinkpad-x280 has seed booking Sep 1-7)
-    await openBookingFlow(page, 'dell-vostro-3400')
+    // Use redmibook-15 which has NO seed bookings (lenovo-thinkpad-t480 has a seed booking)
+    await openBookingFlow(page, 'redmibook-15')
 
     // Step 2 — wait for calendar, click 2 day buttons
     await page.waitForSelector('button >> text=/^\\d{1,2}$/', { timeout: 15_000 })

@@ -4,8 +4,8 @@ import { firstLaptopFromCatalog, openBookingFlow, futureISO } from './helpers'
 // P0: LP Form validation — required fields, doc1 != doc2, phone length, agree.
 test.describe('Booking form validation', () => {
   async function reachStep3(page: import('@playwright/test').Page) {
-    // Use dell-vostro-3400 which has NO seed bookings
-    await openBookingFlow(page, 'dell-vostro-3400')
+    // Use redmibook-15 which has NO seed bookings
+    await openBookingFlow(page, 'redmibook-15')
     await page.waitForSelector('button >> text=/^\\d{1,2}$/', { timeout: 15_000 })
     await page.waitForTimeout(2000)
     const dayBtns = page.locator('button').filter({ hasText: /^\d{1,2}$/ })
